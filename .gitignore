@@ -1,0 +1,30 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Java / Spring Boot
+target/
+*.class
+.mvn/
+mvnw
+mvnw.cmd
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.next/
+
+# Environment
+.env
+.env.local
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
