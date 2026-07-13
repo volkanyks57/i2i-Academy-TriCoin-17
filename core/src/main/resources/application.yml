@@ -3,9 +3,9 @@ spring:
     name: tricoin-core
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/tricoin
-    username: tricoin_user
-    password: tricoin_pass
+    url: jdbc:postgresql://localhost:${DB_PORT:5433}/${DB_NAME:tricoin}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
