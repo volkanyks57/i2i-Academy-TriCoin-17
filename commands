@@ -1,0 +1,7 @@
+docker-compose up -d
+docker-compose down -v
+docker exec -it tricoin-postgres psql -U tricoin_user -d tricoin -c "\dt"
+.\mvnw spring-boot:run
+docker exec -it tricoin-redis redis-cli KEYS "price:*"
+docker exec -it tricoin-redis redis-cli GET "price:BTC"
+docker exec -it tricoin-postgres psql -U tricoin_user -d tricoin -c "SELECT symbol, price, snapshot_at FROM price_snapshots ORDER BY snapshot_at DESC LIMIT 15;"
