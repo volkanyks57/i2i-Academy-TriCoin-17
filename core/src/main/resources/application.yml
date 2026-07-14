@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:${DB_PORT:5433}/${DB_NAME:tricoin}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: tricoin_user
+    password: tricoin_pass
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -31,3 +31,7 @@ logging:
   level:
     com.tricoin.core: DEBUG
     org.hibernate.SQL: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET:tricoin-dev-secret-key-change-in-production-min-256-bits}
+  expiration-ms: 3600000

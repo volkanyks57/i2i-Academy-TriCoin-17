@@ -1,0 +1,39 @@
+.dashboard-wrapper {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #16161a; /* Koyu tema arka planı */
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  color: white;
+}
+
+.dashboard-title {
+  margin-bottom: 25px;
+  font-size: 24px;
+  color: #e0e0e0;
+  text-align: center;
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.price-table th {
+  text-align: left;
+  padding: 15px;
+  color: #888;
+  font-weight: 500;
+  border-bottom: 1px solid #333;
+}
+
+.price-table td {
+  padding: 15px;
+  border-bottom: 1px solid #252525;
+}
+
+.price-table tr:hover {
+  background-color: #1e1e24; /* Fare üzerine gelince şık bir vurgu */
+  transition: 0.2s;
+}
