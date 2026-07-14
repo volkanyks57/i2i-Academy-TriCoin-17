@@ -1,5 +1,6 @@
 package com.tricoin.core.trading;
 
+import com.tricoin.core.trading.dto.TradeQuoteResponse;
 import com.tricoin.core.auth.User;
 import com.tricoin.core.auth.UserRepository;
 import com.tricoin.core.auth.Wallet;
@@ -43,7 +44,7 @@ public class TradingService {
         BigDecimal amount = request.amount();
         String side = request.side().toUpperCase();
 
-        BigDecimal currentPrice = fetchCurrentPrice(symbol);
+        BigDecimal currentPrice = fetchReservedPrice(username, symbol);
         BigDecimal totalValue = amount.multiply(currentPrice).setScale(2, RoundingMode.HALF_UP);
 
         Wallet wallet = walletRepository.findByUserId(user.getId())
@@ -68,7 +69,7 @@ public class TradingService {
         transaction = transactionRepository.save(transaction);
 
         log.info("User {} executed {} {} {} at {}", username, side, amount, symbol, currentPrice);
-
+        consumeReservedPrice(username, symbol);
         return new TradeResponse(
             transaction.getId(),
             symbol,
@@ -125,6 +126,43 @@ public class TradingService {
             throw new IllegalStateException("Price not available for " + symbol);
         }
         return new BigDecimal(value);
+    }
+
+    private static final String RESERVED_PRICE_KEY_PREFIX = "reserved_price:";
+    private static final long QUOTE_TTL_SECONDS = 30;
+
+    /**
+    * Locks in the current market price for 30 seconds so the price
+     * shown in a buy/sell modal doesn't shift under the user while
+    * they're deciding.
+    */
+    public TradeQuoteResponse getQuote(String username, String symbolRaw) {
+        String symbol = symbolRaw.toUpperCase();
+        BigDecimal currentPrice = fetchCurrentPrice(symbol);
+
+        String key = RESERVED_PRICE_KEY_PREFIX + username + ":" + symbol;
+        redisTemplate.opsForValue().set(key, currentPrice.toPlainString(),
+            java.time.Duration.ofSeconds(QUOTE_TTL_SECONDS));
+
+        return new TradeQuoteResponse(symbol, currentPrice, (int) QUOTE_TTL_SECONDS);
+    }
+
+    // Reads the price the user locked in via getQuote(); fails loudly if
+    // it expired, forcing the client to request a fresh quote.
+    private BigDecimal fetchReservedPrice(String username, String symbol) {
+        String key = RESERVED_PRICE_KEY_PREFIX + username + ":" + symbol;
+        String value = redisTemplate.opsForValue().get(key);
+        if (value == null) {
+            throw new IllegalStateException(
+                "Price quote expired or missing — request a new quote before trading");
+        }
+        return new BigDecimal(value);
+    }
+
+    // One-time use: the reservation is consumed once the trade executes,
+    // so the same locked price can't be reused for a second trade.
+    private void consumeReservedPrice(String username, String symbol) {
+        redisTemplate.delete(RESERVED_PRICE_KEY_PREFIX + username + ":" + symbol);
     }
 
     public List<Transaction> getUserTransactions(String username) {
