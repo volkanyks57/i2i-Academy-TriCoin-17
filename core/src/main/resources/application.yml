@@ -35,3 +35,8 @@ logging:
 jwt:
   secret: ${JWT_SECRET:tricoin-dev-secret-key-change-in-production-min-256-bits}
   expiration-ms: 3600000
+
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+  model: gemini-1.5-flash
+  timeout-seconds: 30
