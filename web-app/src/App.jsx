@@ -1,23 +1,20 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import './App.css';
-import Dashboard from './pages/Dashboard';
+// Dashboard henüz yoksa boş bir tane oluşturacağız
+import Dashboard from './pages/Dashboard'; 
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        {/* Uygulama açıldığında doğrudan login sayfasına yönlendir */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Giriş ve Kayıt sayfalarımızın rotaları */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Login />} /> {/* Varsayılan giriş ekranı */}
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
-
 export default App;

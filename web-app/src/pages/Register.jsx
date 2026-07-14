@@ -1,32 +1,32 @@
-import { useState } from 'react';
-import { registerUser } from '../services/api';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import api from '../services/api';
 
-export default function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const Register = () => {
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await registerUser({ username, password });
-      alert('Kayıt başarılı! Şimdi giriş yapabilirsin.');
+      await api.post('/auth/register', formData);
+      alert('Kayıt başarılı! Giriş yapabilirsiniz.');
       navigate('/login');
     } catch (error) {
-      alert('Kayıt başarısız oldu.');
+      alert('Kayıt başarısız!');
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="register-page">
       <form onSubmit={handleRegister} className="auth-form">
         <h2>Kayıt Ol</h2>
-        <input type="text" placeholder="Kullanıcı Adı" onChange={(e) => setUsername(e.target.value)} required />
-        <input type="password" placeholder="Şifre" onChange={(e) => setPassword(e.target.value)} required />
+        <input type="text" placeholder="Kullanıcı Adı" onChange={(e) => setFormData({...formData, username: e.target.value})} />
+        <input type="password" placeholder="Şifre" onChange={(e) => setFormData({...formData, password: e.target.value})} />
         <button type="submit">Kayıt Ol</button>
-        <p>Zaten hesabın var mı? <Link to="/login" className="link">Giriş Yap</Link></p>
+        <p>Zaten hesabın var mı? <Link to="/login">Giriş Yap</Link></p>
       </form>
     </div>
   );
-}
+};
+export default Register;

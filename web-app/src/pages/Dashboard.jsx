@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getMarketPrices } from '../services/api';
 import './Dashboard.css';
+import api, { getMarketPrices } from '../services/api';
+import AiInsights from '../components/AiInsights';
 
 export default function Dashboard() {
   const [prices, setPrices] = useState([]);
@@ -38,6 +39,13 @@ export default function Dashboard() {
         ))}
       </tbody>
     </table>
+    <div className="dashboard-wrapper">
+      <h2 className="dashboard-title">Canlı Piyasa Fiyatları</h2>
+      {/* Tablon burada kalacak */}
+      
+      {/* AI Asistanını buraya ekliyoruz */}
+      <AiInsights /> 
+    </div>
   </div>
 );
 }
