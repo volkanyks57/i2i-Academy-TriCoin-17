@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:${DB_PORT:5433}/${DB_NAME:tricoin}
-    username: tricoin_user
-    password: tricoin_pass
+    username: ${DB_USERNAME:tricoin_user}
+    password: ${DB_PASSWORD:tricoin_pass}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -19,8 +19,8 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       repositories:
         enabled: false
 
