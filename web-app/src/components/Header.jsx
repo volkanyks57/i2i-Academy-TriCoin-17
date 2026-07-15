@@ -1,9 +1,23 @@
 // src/components/Header.jsx
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Tema state'i: Sayfa ilk açıldığında localStorage'a bakar, yoksa 'dark' başlar
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+  // Tema değiştiğinde HTML'in data-theme değerini güncelle
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('session_token');
@@ -35,6 +49,7 @@ export default function Header() {
         </div>
 
         <nav className="app-nav">
+          {/* Dashboard Butonu */}
           <button
             className={`app-nav-btn ${isDashboard ? 'active' : ''}`}
             onClick={() => navigate('/dashboard')}
@@ -48,6 +63,7 @@ export default function Header() {
             <span>Dashboard</span>
           </button>
 
+          {/* Geçmiş Butonu */}
           <button
             className={`app-nav-btn ${isHistory ? 'active' : ''}`}
             onClick={() => navigate('/history')}
@@ -59,6 +75,12 @@ export default function Header() {
             <span>Geçmiş</span>
           </button>
 
+          {/* YENİ: Tema Değiştirme Butonu */}
+          <button className="app-nav-btn" onClick={toggleTheme} title="Tema Değiştir">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+
+          {/* Çıkış Butonu */}
           <button
             className="app-nav-btn app-nav-logout"
             onClick={handleLogout}

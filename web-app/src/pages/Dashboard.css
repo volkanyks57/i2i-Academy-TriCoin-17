@@ -30,3 +30,19 @@
   border-bottom: 1px solid var(--border);
   font-family: var(--mono);
 }
+
+/* Coin Logoları ve Sembol Hücresi Düzeni */
+.symbol-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Logo ile sembol arasındaki boşluk */
+}
+
+.coin-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%; /* Yuvarlak görünüm için */
+  object-fit: cover;
+  background-color: #fff; /* Şeffaf logolarda arkası temiz dursun diye */
+  padding: 2px;
+}

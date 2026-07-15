@@ -1,18 +1,24 @@
 package com.tricoin.core.auth;
 
-import com.tricoin.core.auth.dto.AuthResponse;
-import com.tricoin.core.auth.dto.LoginRequest;
-import com.tricoin.core.auth.dto.RegisterRequest;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tricoin.core.auth.dto.AuthResponse;
+import com.tricoin.core.auth.dto.LoginRequest;
+import com.tricoin.core.auth.dto.RegisterRequest;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 
 /**
  * Handles user registration and login.
@@ -49,12 +55,16 @@ public class AuthController {
             .build();
         user = userRepository.save(user);
 
+        
+
         Wallet wallet = Wallet.builder()
             .userId(user.getId())
             .balanceUsd(randomStartingBalance())
             .updatedAt(LocalDateTime.now())
             .build();
         walletRepository.save(wallet);
+
+       
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body("User registered successfully");

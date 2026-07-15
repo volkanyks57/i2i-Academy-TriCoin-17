@@ -95,6 +95,7 @@ export default function Dashboard() {
             <tr>
               <th>Sembol</th>
               <th>Fiyat ($)</th>
+              <th>24s Değişim</th>
             </tr>
           </thead>
           <tbody>
@@ -109,8 +110,22 @@ export default function Dashboard() {
                   onClick={() => handleRowClick(item.symbol)}
                   title={`${item.symbol} işlemi için tıkla`}
                 >
-                  <td><strong>{item.symbol}</strong></td>
+                  <td className="symbol-cell">
+                    <img
+                      src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
+                      alt={item.symbol}
+                      className="coin-logo"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png';
+                      }}
+                    />
+                    <strong>{item.symbol}</strong>
+                  </td>
                   <td>{parseFloat(item.price).toFixed(2)}</td>
+                  <td style={{ color: item.change24h >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
+                    {item.change24h > 0 ? '+' : ''}{parseFloat(item.change24h).toFixed(2)}%
+                  </td>
                 </tr>
               );
             })}

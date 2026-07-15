@@ -1,10 +1,10 @@
 package com.tricoin.core.market;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -18,10 +18,11 @@ public class PriceProviderRouter {
         this.fallbackProvider = fallbackProvider;
     }
 
-    public Map<String, BigDecimal> fetchLatestPrices() {
+    public Map<String, MarketTicker> fetchLatestPrices() {
         try {
-            Map<String, BigDecimal> prices = primaryProvider.fetchLatestPrices();
-            log.info("Prices fetched from {}", primaryProvider.getProviderName());
+            // Burası artık BinancePriceProvider'da güncellediğin listedeki tüm coinleri çekecek!
+            Map<String, MarketTicker> prices = primaryProvider.fetchLatestPrices();
+            log.info("Prices fetched from {}. Total coins: {}", primaryProvider.getProviderName(), prices.size());
             return prices;
         } catch (Exception e) {
             log.warn("{} failed ({}), falling back to {}",

@@ -1,21 +1,23 @@
 package com.tricoin.core.trading;
 
-import com.tricoin.core.trading.dto.TradeQuoteResponse;
-import com.tricoin.core.auth.User;
-import com.tricoin.core.auth.UserRepository;
-import com.tricoin.core.auth.Wallet;
-import com.tricoin.core.auth.WalletRepository;
-import com.tricoin.core.trading.dto.TradeRequest;
-import com.tricoin.core.trading.dto.TradeResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
+import com.tricoin.core.auth.User;
+import com.tricoin.core.auth.UserRepository;
+import com.tricoin.core.auth.Wallet;
+import com.tricoin.core.auth.WalletRepository;
+import com.tricoin.core.trading.dto.TradeQuoteResponse;
+import com.tricoin.core.trading.dto.TradeRequest;
+import com.tricoin.core.trading.dto.TradeResponse;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handles buy and sell trading operations.
@@ -125,6 +127,12 @@ public class TradingService {
         if (value == null) {
             throw new IllegalStateException("Price not available for " + symbol);
         }
+        
+        // DÜZELTME: Eğer veri "fiyat:değişim" formatındaysa, sadece ilk kısmı al
+        if (value.contains(":")) {
+            value = value.split(":")[0];
+        }
+        
         return new BigDecimal(value);
     }
 

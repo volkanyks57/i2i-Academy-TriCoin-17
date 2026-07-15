@@ -25,19 +25,23 @@ public class TickerEngine implements PriceProvider {
         "ADA", new BigDecimal("0.45")
     );
 
-    private final Map<String, BigDecimal> currentPrices = new ConcurrentHashMap<>();
+    // 1. Değişiklik: Map artık sadece fiyat değil, MarketTicker (fiyat + değişim) tutuyor
+    private final Map<String, MarketTicker> currentPrices = new ConcurrentHashMap<>();
     private final Random random = new Random();
 
     public TickerEngine() {
-        currentPrices.putAll(BASE_PRICES);
+        // 2. Değişiklik: Başlangıç fiyatlarını MarketTicker objesine dönüştürüyoruz (ilk değişim %0)
+        BASE_PRICES.forEach((symbol, price) ->
+            currentPrices.put(symbol, new MarketTicker(price, BigDecimal.ZERO))
+        );
     }
 
     @Override
-    public Map<String, BigDecimal> fetchLatestPrices() {
-        Map<String, BigDecimal> updated = new HashMap<>();
+    public Map<String, MarketTicker> fetchLatestPrices() {
+        Map<String, MarketTicker> updated = new HashMap<>();
         for (String symbol : SYMBOLS) {
-            BigDecimal current = currentPrices.get(symbol);
-            BigDecimal next = simulateNextPrice(current);
+            MarketTicker current = currentPrices.get(symbol);
+            MarketTicker next = simulateNextTicker(current);
             currentPrices.put(symbol, next);
             updated.put(symbol, next);
         }
@@ -50,9 +54,19 @@ public class TickerEngine implements PriceProvider {
         return "TickerEngine (fallback)";
     }
 
-    private BigDecimal simulateNextPrice(BigDecimal current) {
-        double changePercent = (random.nextDouble() - 0.5) * 0.02;
-        BigDecimal change = current.multiply(BigDecimal.valueOf(changePercent));
-        return current.add(change).setScale(2, RoundingMode.HALF_UP);
+    // 3. Değişiklik: Sadece fiyatı değil, 24 saatlik değişimi de simüle edip MarketTicker dönüyoruz
+    private MarketTicker simulateNextTicker(MarketTicker current) {
+        BigDecimal currentPrice = current.price();
+        
+        // Fiyat için -%1 ile +%1 arası dalgalanma simülasyonu
+        double priceVolatility = (random.nextDouble() - 0.5) * 0.02;
+        BigDecimal priceChange = currentPrice.multiply(BigDecimal.valueOf(priceVolatility));
+        BigDecimal nextPrice = currentPrice.add(priceChange).setScale(2, RoundingMode.HALF_UP);
+
+        // Ekranda yeşil/kırmızı görünmesi için -%5 ile +%5 arası rastgele 24s değişim yüzdesi simülasyonu
+        double change24hRandom = (random.nextDouble() - 0.5) * 10;
+        BigDecimal nextChange24h = BigDecimal.valueOf(change24hRandom).setScale(2, RoundingMode.HALF_UP);
+
+        return new MarketTicker(nextPrice, nextChange24h);
     }
 }
