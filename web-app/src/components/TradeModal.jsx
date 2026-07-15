@@ -16,6 +16,33 @@ import {
   getPriceHistory,
 } from '../services/api';
 
+// Backend error messages come in English (see TradingService.java) —
+// this maps the known ones to Turkish so the UI stays consistent.
+const translateError = (message) => {
+  if (!message) return 'İşlem gerçekleştirilemedi.';
+
+  if (message.includes('Insufficient funds')) {
+    return 'Bakiyeniz bu işlem için yetersiz.';
+  }
+  if (message.startsWith('Insufficient') && message.includes('balance')) {
+    const symbolMatch = message.match(/^Insufficient (\w+) balance/);
+    const symbol = symbolMatch ? symbolMatch[1] : '';
+    return `Yetersiz ${symbol} bakiyesi.`;
+  }
+  if (message.startsWith('You do not hold any')) {
+    const symbol = message.replace('You do not hold any ', '');
+    return `Elinizde hiç ${symbol} bulunmuyor.`;
+  }
+  if (message.includes('Price quote expired')) {
+    return 'Fiyatın süresi doldu, lütfen tekrar deneyin.';
+  }
+  if (message.includes('Price not available')) {
+    return 'Bu coin için fiyat bilgisi şu an mevcut değil.';
+  }
+
+  return 'İşlem gerçekleştirilemedi.';
+};
+
 const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
   const [quote, setQuote] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
@@ -24,8 +51,16 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Auto-dismiss the error toast after a few seconds so it doesn't
+  // linger on screen once the user has read it.
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(''), 4000);
+    return () => clearTimeout(timer);
+  }, [error]);
   const [success, setSuccess] = useState(null);
   const [historyHours, setHistoryHours] = useState(24);
+  const [secondsLeft, setSecondsLeft] = useState(30);
 
   useEffect(() => {
     if (!isOpen || !symbol) return;
@@ -34,6 +69,7 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
     setAmount('');
     setError('');
     setSuccess(null);
+    setSecondsLeft(30);
     setLoading(true);
 
     Promise.all([
@@ -43,6 +79,7 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
     ])
       .then(([quoteRes, portfolioRes, historyRes]) => {
         setQuote(quoteRes.data);
+        setSecondsLeft(quoteRes.data.validForSeconds || 30);
         setPortfolio(portfolioRes.data);
         setHistory(
           (historyRes.data.points || []).map((p) => ({
@@ -59,6 +96,28 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
       })
       .finally(() => setLoading(false));
   }, [isOpen, symbol, historyHours]);
+
+  // Live countdown for the locked price. When it hits 0, silently
+  // fetch a fresh quote and restart the countdown — the user never
+  // has to manually refresh.
+  useEffect(() => {
+    if (!isOpen || !quote) return;
+
+    if (secondsLeft <= 0) {
+      getTradeQuote(symbol)
+        .then((res) => {
+          setQuote(res.data);
+          setSecondsLeft(res.data.validForSeconds || 30);
+        })
+        .catch(() => {
+          setError('Fiyat yenilenemedi, lütfen tekrar deneyin.');
+        });
+      return;
+    }
+
+    const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [secondsLeft, isOpen, quote, symbol]);
 
   if (!isOpen) return null;
 
@@ -95,9 +154,8 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
       setSuccess(res.data);
       if (onTradeSuccess) onTradeSuccess();
     } catch (err) {
-      const message =
-        err.response?.data?.message || 'İşlem gerçekleştirilemedi.';
-      setError(message);
+      const rawMessage = err.response?.data?.message;
+      setError(translateError(rawMessage));
     } finally {
       setLoading(false);
     }
@@ -114,12 +172,22 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
             <span className="trade-symbol-badge">{symbol}</span>
             İşlem
           </h3>
-          <button className="trade-modal-close" onClick={onClose} title="Kapat">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <div className="trade-modal-header-right">
+            {quote && (
+              <div
+                className="trade-countdown-mini"
+                title={`${secondsLeft} saniye sonra fiyat yenilenir`}
+              >
+                {secondsLeft}s
+              </div>
+            )}
+            <button className="trade-modal-close" onClick={onClose} title="Kapat">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {success ? (
@@ -316,11 +384,20 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                     </>
                   )}
 
-                  {error && <div className="trade-error">{error}</div>}
+                  {error && (
+                    <div className="trade-toast">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span>{error}</span>
+                    </div>
+                  )}
 
                   {quote && (
                     <div className="trade-price-hint-bottom">
-                      Bu fiyat {quote.reservedForSeconds ?? 30} saniye kilitlenir
+                      Fiyat 30 saniyede bir otomatik yenilenir
                     </div>
                   )}
                 </>

@@ -167,6 +167,30 @@ body {
   box-sizing: border-box;
 }
 
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.08);
+}
+
+.auth-theme-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -253,18 +277,50 @@ body {
 
 .auth-input {
   padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(167, 139, 250, 0.25);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-wrapper .auth-input {
+  width: 100%;
+  padding-right: 42px;
+  box-sizing: border-box;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.auth-password-toggle:hover {
+  color: var(--text-main);
+}
+
 .auth-input:focus {
-  border-color: #a78bfa;
-  background: rgba(0, 0, 0, 0.45);
+  border-color: var(--accent);
+  background: var(--input-bg);
 }
 
 .auth-input:disabled {
@@ -273,7 +329,7 @@ body {
 }
 
 .auth-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-secondary);
 }
 
 .auth-error {
@@ -346,7 +402,7 @@ body {
 .auth-footer {
   margin-top: 22px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   font-size: 0.88rem;
 }
 
@@ -648,6 +704,7 @@ body {
 }
 
 .trade-modal {
+  position: relative;
   width: 420px;
   max-width: 92vw;
   max-height: 90vh;
@@ -682,6 +739,27 @@ body {
   justify-content: space-between;
   padding: 18px 20px;
   border-bottom: 1px solid var(--border-color);
+}
+
+.trade-modal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trade-countdown-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-inner);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .trade-modal-header h3 {
@@ -838,7 +916,7 @@ body {
 .trade-price-hint-bottom {
   margin-top: auto;
   padding-top: 14px;
-  color: rgba(167, 139, 250, 0.7);
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-style: italic;
   text-align: center;
@@ -1015,6 +1093,50 @@ body {
   font-size: 0.9rem;
 }
 
+.trade-toast {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: #ef4444;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+  z-index: 10;
+  animation: trade-toast-in 0.25s ease, trade-toast-out 0.25s ease 3.5s forwards;
+  max-width: 320px;
+}
+
+.trade-toast svg {
+  flex-shrink: 0;
+}
+
+@keyframes trade-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes trade-toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 .trade-success {
   display: flex;
   flex-direction: column;
@@ -1037,18 +1159,18 @@ body {
 .trade-success-details {
   width: 100%;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-inner);
   border-radius: 10px;
 }
 
 .trade-success-details p {
   margin: 6px 0;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-main);
   font-size: 0.92rem;
 }
 
 .trade-success-details strong {
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 @media (max-width: 780px) {
@@ -1597,6 +1719,17 @@ body {
   --bg-inner: rgba(37, 99, 235, 0.06);
   --border-color: rgba(37, 99, 235, 0.18);
   --input-bg: #ffffff;
+}
+
+/* The brand name uses a gradient text effect that only reads well
+   against a dark background — override it with a darker gradient
+   in light mode so "TriCoin" stays legible on the white card/header. */
+[data-theme='light'] .auth-brand-name,
+[data-theme='light'] .app-brand-name {
+  background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* 1. Base & Reset */

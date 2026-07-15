@@ -1,23 +1,15 @@
 // src/components/Header.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme } from '../hooks/useTheme';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Tema state'i: Sayfa ilk açıldığında localStorage'a bakar, yoksa 'dark' başlar
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
-
-  // Tema değiştiğinde HTML'in data-theme değerini güncelle
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+// Shared theme state/logic lives in useTheme() so Header, Login, and
+// Register all stay in sync instead of each keeping their own copy.
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem('session_token');
