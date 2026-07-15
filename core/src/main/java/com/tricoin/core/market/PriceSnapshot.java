@@ -31,7 +31,7 @@ public class PriceSnapshot {
     @Column(nullable = false, length = 10)
     private String symbol;
 
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 8)
     private BigDecimal price;
 
     // Yeni Eklenen Sütun
