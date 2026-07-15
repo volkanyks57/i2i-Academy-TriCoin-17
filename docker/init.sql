@@ -46,7 +46,7 @@ CREATE INDEX idx_transactions_created_at ON transactions(created_at DESC);
 CREATE TABLE price_snapshots (
     id          BIGSERIAL PRIMARY KEY,
     symbol      VARCHAR(10)    NOT NULL,
-    price       DECIMAL(18, 2) NOT NULL,
+    price       DECIMAL(18, 8) NOT NULL,
     snapshot_at TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
