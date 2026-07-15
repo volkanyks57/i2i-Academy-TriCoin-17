@@ -41,8 +41,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/market/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                // AI endpoint'ini de buraya eklemeniz gerekebilir (eğer halka açıksa)
-                // .requestMatchers("/api/ai/**").permitAll() 
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

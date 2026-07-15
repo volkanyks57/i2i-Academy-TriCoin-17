@@ -15,14 +15,32 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// BURAYI EKLE:
-// Market verilerini çeken fonksiyonu dışarıya (export) açıyoruz
+// Market
 export const getMarketPrices = () => {
-  return api.get('/market/prices'); // Backend'deki MarketController'daki endpoint yolunu buraya yazmalısın
+  return api.get('/market/prices');
+};
+
+export const getPriceHistory = (symbol, hours = 24) => {
+  return api.get(`/market/history/${symbol}?hours=${hours}`);
+};
+
+// AI
+export const getAiInsight = (query) => {
+  return api.post('/ai/query', { message: query });
+};
+
+// Portfolio
+export const getPortfolio = () => {
+  return api.get('/portfolio');
+};
+
+// Trading
+export const getTradeQuote = (symbol) => {
+  return api.get(`/trade/quote/${symbol}`);
+};
+
+export const executeTrade = (symbol, side, amount) => {
+  return api.post('/trade/execute', { symbol, side, amount });
 };
 
 export default api;
-
-export const getAiInsight = (query) => {
-  return api.post('/ai/query', { query }); // Backend'deki AiQueryRequest DTO'su ile eşleşecek
-};

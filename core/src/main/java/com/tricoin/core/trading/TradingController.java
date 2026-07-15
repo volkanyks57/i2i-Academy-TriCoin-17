@@ -26,18 +26,18 @@ public class TradingController {
     private final TradingService tradingService;
 
 @GetMapping("/quote/{symbol}")
-public ResponseEntity<?> quote(
-    @AuthenticationPrincipal String username,
-    @PathVariable String symbol
-) {
-    try {
-        TradeQuoteResponse quote = tradingService.getQuote(username, symbol);
-        return ResponseEntity.ok(quote);
-    } catch (IllegalStateException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Map.of("error", "QUOTE_FAILED", "message", e.getMessage()));
+    public ResponseEntity<?> quote(
+        @AuthenticationPrincipal String username,
+        @PathVariable String symbol
+    ) {
+        try {
+            TradeQuoteResponse quote = tradingService.getQuote(username, symbol);
+            return ResponseEntity.ok(quote);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "QUOTE_FAILED", "message", e.getMessage()));
+        }
     }
-}
     @PostMapping("/execute")
     public ResponseEntity<?> execute(
         @AuthenticationPrincipal String username,
