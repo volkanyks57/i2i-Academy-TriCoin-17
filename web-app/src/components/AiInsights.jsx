@@ -30,7 +30,7 @@ const AiInsights = () => {
         style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
       />
       <button onClick={handleAsk} disabled={loading}>
-        {loading ? 'Analiz ediliyor...' : 'Analiz Et'}
+        {loading ? 'Analigit branchgit branchz ediliyor...' : 'Analiz Et'}
       </button>
       {response && <p style={{ marginTop: '15px' }}>{response}</p>}
     </div>
