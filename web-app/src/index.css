@@ -536,23 +536,23 @@ body {
 .portfolio-balance-card,
 .portfolio-holdings-card {
   padding: 14px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-inner);
   border-radius: 10px;
-  border: 1px solid rgba(167, 139, 250, 0.12);
+  border: 1px solid var(--border-color);
 }
 
 .portfolio-card-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   font-size: 0.78rem;
   margin-bottom: 8px;
   letter-spacing: 0.3px;
 }
 
 .portfolio-card-value {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.15rem;
   font-weight: 700;
 }
@@ -614,13 +614,13 @@ body {
 }
 
 .portfolio-holding-amount {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-main);
   font-size: 0.75rem;
   font-family: 'Courier New', monospace;
 }
 
 .portfolio-holding-value {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   font-size: 0.7rem;
 }
 
@@ -652,9 +652,9 @@ body {
   max-width: 92vw;
   max-height: 90vh;
   overflow-y: auto;
-  background: rgba(20, 15, 35, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(14px);
-  border: 1px solid rgba(167, 139, 250, 0.3);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: trade-modal-slide 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -681,7 +681,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .trade-modal-header h3 {
@@ -689,7 +689,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -711,7 +711,7 @@ body {
   width: 32px;
   height: 32px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -736,7 +736,7 @@ body {
 
 .trade-chart-side {
   padding: 20px;
-  border-right: 1px solid rgba(167, 139, 250, 0.15);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -758,7 +758,7 @@ body {
 }
 
 .trade-chart-price {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -783,7 +783,7 @@ body {
 }
 
 .trade-chart-change-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-secondary);
   font-weight: 400;
   font-size: 0.8rem;
 }
@@ -821,7 +821,7 @@ body {
 .trade-chart-container {
   flex: 1;
   min-height: 320px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-inner);
   border-radius: 10px;
   padding: 12px 8px 8px 0;
 }
@@ -831,7 +831,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -846,7 +846,7 @@ body {
 
 .trade-loading {
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   padding: 20px 0;
 }
 
@@ -862,17 +862,17 @@ body {
   flex-direction: column;
   gap: 4px;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-inner);
   border-radius: 10px;
 }
 
 .trade-info-label {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   font-size: 0.78rem;
 }
 
 .trade-info-value {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -886,9 +886,9 @@ body {
 .trade-side-btn {
   flex: 1;
   padding: 14px;
-  background: rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: var(--bg-inner);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 700;
@@ -898,8 +898,18 @@ body {
 }
 
 .trade-side-btn:hover {
+  color: var(--text-main);
+  border-color: var(--accent);
+}
+
+.trade-buy {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
-  border-color: rgba(167, 139, 250, 0.5);
+  border-color: transparent;
+}
+
+.trade-buy:hover {
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
 .trade-buy.active {
@@ -907,6 +917,16 @@ body {
   color: #ffffff;
   border-color: transparent;
   box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.trade-sell {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.trade-sell:hover {
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
 .trade-sell.active {
@@ -918,7 +938,7 @@ body {
 
 .trade-amount-label {
   display: block;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   margin-bottom: 6px;
 }
@@ -926,10 +946,10 @@ body {
 .trade-amount-input {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(167, 139, 250, 0.3);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1rem;
   outline: none;
   transition: border-color 0.15s ease;
@@ -947,16 +967,16 @@ body {
 
 .trade-total {
   padding: 10px 14px;
-  background: rgba(167, 139, 250, 0.12);
+  background: var(--bg-inner);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-main);
   font-size: 0.95rem;
   margin-bottom: 14px;
   text-align: center;
 }
 
 .trade-total strong {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.05rem;
 }
 
@@ -1378,7 +1398,7 @@ body {
 
 .history-title {
   margin: 0 0 24px 0;
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -1392,21 +1412,21 @@ body {
 
 .history-stat-card {
   padding: 16px 18px;
-  background: rgba(30, 20, 50, 0.6);
+  background: var(--bg-card);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(167, 139, 250, 0.25);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
 }
 
 .history-stat-label {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-secondary);
   font-size: 0.78rem;
   margin-bottom: 6px;
   letter-spacing: 0.3px;
 }
 
 .history-stat-value {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.4rem;
   font-weight: 700;
 }
@@ -1420,9 +1440,9 @@ body {
 }
 
 .history-list-container {
-  background: rgba(30, 20, 50, 0.6);
+  background: var(--bg-card);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(167, 139, 250, 0.25);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -1460,19 +1480,19 @@ body {
 .history-table th {
   padding: 14px 18px;
   text-align: left;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .history-table td {
   padding: 14px 18px;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-main);
   font-size: 0.9rem;
-  border-bottom: 1px solid rgba(167, 139, 250, 0.08);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .history-table tbody tr {
@@ -1488,7 +1508,7 @@ body {
 }
 
 .history-cell-date {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   white-space: nowrap;
 }
@@ -1522,15 +1542,15 @@ body {
 
 .history-cell-amount {
   font-family: 'Courier New', monospace;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-main);
 }
 
 .history-cell-price {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-secondary);
 }
 
 .history-cell-total {
-  color: #ffffff;
+  color: var(--text-main);
   font-weight: 600;
 }
 
@@ -1561,6 +1581,9 @@ body {
   --text-main: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.55);
   --accent: #7c3aed;
+  --bg-inner: rgba(0, 0, 0, 0.25);
+  --border-color: rgba(167, 139, 250, 0.25);
+  --input-bg: rgba(0, 0, 0, 0.35);
 }
 
 [data-theme='light'] {
@@ -1571,6 +1594,9 @@ body {
   --text-main: #1e293b;       /* Koyu lacivert/siyah yazı */
   --text-secondary: #475569;  /* Okunaklı gri-mavi yazı */
   --accent: #2563eb;          /* Canlı ve profesyonel borsa mavisi */
+  --bg-inner: rgba(37, 99, 235, 0.06);
+  --border-color: rgba(37, 99, 235, 0.18);
+  --input-bg: #ffffff;
 }
 
 /* 1. Base & Reset */
