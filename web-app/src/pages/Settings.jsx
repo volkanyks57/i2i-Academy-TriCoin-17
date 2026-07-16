@@ -103,22 +103,22 @@ export default function Settings() {
     }
   };
 
-  return (
-    <div className="settings-page">
+  return (<div className="settings-page">
       <Header />
 
-      <div className="settings-wrapper">
-        <h2 className="settings-title">Hesap Ayarları</h2>
+      <div className="settings-wrapper" style={{ maxWidth: '600px', margin: '0 auto', padding: '30px 20px' }}>
+        <h2 className="settings-title" style={{ color: 'var(--text-hi)', marginBottom: '24px' }}>Hesap Ayarları</h2>
 
         {message && (
-          <div className={`settings-toast settings-toast-${message.type}`}>
+          <div className={`settings-toast settings-toast-${message.type}`} style={{ marginBottom: '18px' }}>
             {message.text}
           </div>
         )}
 
-        <div className="settings-card">
-          <h3 className="settings-card-title">Profil Fotoğrafı</h3>
-          <div className="settings-avatar-row">
+        {/* Profil Fotoğrafı - Neon Glow Kart */}
+        <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '14px', padding: '22px', marginBottom: '20px' }}>
+          <h3 className="settings-card-title" style={{ color: 'var(--text-hi)', marginBottom: '18px' }}>Profil Fotoğrafı</h3>
+          <div className="settings-avatar-row" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
             <div className="settings-avatar-preview">
               {avatarPreview ? (
                 <img src={avatarPreview} alt="Profil" />
@@ -142,15 +142,16 @@ export default function Settings() {
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
               />
-              <p className="settings-hint">JPG veya PNG, ideal 200x200px</p>
+              <p className="settings-hint" style={{ color: 'var(--text-lo)', fontSize: '0.78rem' }}>JPG veya PNG, ideal 200x200px</p>
             </div>
           </div>
         </div>
 
-        <div className="settings-card">
-          <h3 className="settings-card-title">Şifre Değiştir</h3>
+        {/* Şifre Değiştir - Neon Glow Kart */}
+        <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '14px', padding: '22px' }}>
+          <h3 className="settings-card-title" style={{ color: 'var(--text-hi)', marginBottom: '18px' }}>Şifre Değiştir</h3>
           <form className="settings-form" onSubmit={handlePasswordSubmit}>
-            <label className="auth-label">
+            <label className="auth-label" style={{ color: 'var(--text-mid)' }}>
               Mevcut Şifre
               <input
                 className="auth-input"
@@ -161,7 +162,7 @@ export default function Settings() {
                 required
               />
             </label>
-            <label className="auth-label">
+            <label className="auth-label" style={{ color: 'var(--text-mid)' }}>
               Yeni Şifre
               <input
                 className="auth-input"
@@ -172,7 +173,7 @@ export default function Settings() {
                 required
               />
             </label>
-            <label className="auth-label">
+            <label className="auth-label" style={{ color: 'var(--text-mid)' }}>
               Yeni Şifre (Tekrar)
               <input
                 className="auth-input"
@@ -186,6 +187,7 @@ export default function Settings() {
             <button
               type="submit"
               className="settings-submit-btn"
+              style={{ width: '100%' }}
               disabled={passwordLoading}
             >
               {passwordLoading ? 'Güncelleniyor...' : 'Şifreyi Güncelle'}
@@ -193,6 +195,5 @@ export default function Settings() {
           </form>
         </div>
       </div>
-    </div>
-  );
+    </div>);
 }
