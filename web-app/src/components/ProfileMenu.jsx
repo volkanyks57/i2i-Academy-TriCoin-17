@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { getPortfolio, getMarketPrices } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const COLORS = ['#a78bfa', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#7c3aed', '#ec4899', '#14b8a6'];
 
@@ -12,6 +13,7 @@ export default function ProfileMenu() {
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   // Same JWT-decode trick used in PortfolioWidget — avoids an extra API call.
   useEffect(() => {
@@ -92,6 +94,20 @@ export default function ProfileMenu() {
               </div>
             </div>
           </div>
+
+        <button
+            className="profile-settings-btn"
+            onClick={() => {
+                setOpen(false);
+                navigate('/settings');
+            }}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            Ayarlar
+        </button>
 
           {loading ? (
             <div className="profile-dropdown-loading">Yükleniyor...</div>
