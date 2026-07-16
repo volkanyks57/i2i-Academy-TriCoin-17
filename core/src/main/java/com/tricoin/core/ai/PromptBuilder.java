@@ -95,11 +95,30 @@ public class PromptBuilder {
         return prompt.toString();
     }
 
+    // GÜNCELLENDİ: Gelen "Fiyat:Yüzde" metnini ikiye bölüp sadece fiyatı alan kısım
     private BigDecimal fetchCurrentPrice(String symbol) {
         String value = redisTemplate.opsForValue().get(PRICE_KEY_PREFIX + symbol);
-        return value == null ? null : new BigDecimal(value);
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            // Eğer metnin içinde ':' varsa, böl ve sadece ilk kısmı (fiyatı) al
+            if (value.contains(":")) {
+                String[] parts = value.split(":");
+                return new BigDecimal(parts[0]);
+            }
+            
+            // Eğer ':' yoksa, normal düz sayı olma ihtimaline karşı doğrudan çevir:
+            return new BigDecimal(value);
+
+        } catch (NumberFormatException e) {
+            System.err.println("Geçersiz fiyat formatı yakalandı ve atlandı: " + value);
+            return BigDecimal.ZERO;
+        }
     }
 
+    // GÜNCELLENDİ: Gemini'ye temiz fiyatları gönderen kısım
     private void appendMarketPrices(StringBuilder prompt) {
         Set<String> keys = redisTemplate.keys(PRICE_KEY_PREFIX + "*");
         if (keys == null || keys.isEmpty()) {
@@ -107,10 +126,10 @@ public class PromptBuilder {
             return;
         }
         for (String key : keys) {
-            String value = redisTemplate.opsForValue().get(key);
-            if (value != null) {
-                String symbol = key.substring(PRICE_KEY_PREFIX.length());
-                prompt.append("- ").append(symbol).append(": $").append(value).append("\n");
+            String symbol = key.substring(PRICE_KEY_PREFIX.length());
+            BigDecimal cleanPrice = fetchCurrentPrice(symbol);
+            if (cleanPrice != null && cleanPrice.compareTo(BigDecimal.ZERO) > 0) {
+                prompt.append("- ").append(symbol).append(": $").append(cleanPrice).append("\n");
             }
         }
     }

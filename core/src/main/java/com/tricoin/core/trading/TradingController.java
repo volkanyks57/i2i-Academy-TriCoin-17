@@ -7,17 +7,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Trading endpoints. All routes here require a valid JWT — the
- * JwtAuthenticationFilter puts the username into the SecurityContext,
- * and @AuthenticationPrincipal pulls it out cleanly.
- */
 @RestController
 @RequestMapping("/api/trade")
 @RequiredArgsConstructor
@@ -25,9 +19,9 @@ public class TradingController {
 
     private final TradingService tradingService;
 
-@GetMapping("/quote/{symbol}")
+    @GetMapping("/quote/{symbol}")
     public ResponseEntity<?> quote(
-        @AuthenticationPrincipal String username,
+        @RequestAttribute("username") String username,
         @PathVariable String symbol
     ) {
         try {
@@ -38,9 +32,10 @@ public class TradingController {
                 .body(Map.of("error", "QUOTE_FAILED", "message", e.getMessage()));
         }
     }
+
     @PostMapping("/execute")
     public ResponseEntity<?> execute(
-        @AuthenticationPrincipal String username,
+        @RequestAttribute("username") String username,
         @Valid @RequestBody TradeRequest request
     ) {
         try {
@@ -56,9 +51,7 @@ public class TradingController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<?> history(@AuthenticationPrincipal String username) {
-        // The service will resolve the user; the controller just needs
-        // to translate the username into the caller's transaction list.
+    public ResponseEntity<?> history(@RequestAttribute("username") String username) {
         List<Transaction> transactions = tradingService.getUserTransactions(username);
         return ResponseEntity.ok(Map.of("transactions", transactions));
     }

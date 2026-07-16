@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class PortfolioController {
     private final CryptoHoldingRepository cryptoHoldingRepository;
 
     @GetMapping
-    public ResponseEntity<?> getPortfolio(@AuthenticationPrincipal String username) {
+    public ResponseEntity<?> getPortfolio(@RequestAttribute("username") String username) {
         try {
             User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
