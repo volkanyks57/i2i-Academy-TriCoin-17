@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
-import './Dashboard.css';
 import { getMarketPrices } from '../services/api';
 import Header from '../components/Header';
 import AiInsights from '../components/AiInsights';
 import TradeModal from '../components/TradeModal';
 import PortfolioWidget from '../components/PortfolioWidget';
+
 
 export default function Dashboard() {
   const [prices, setPrices] = useState([]);
@@ -12,16 +12,12 @@ export default function Dashboard() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [portfolioRefresh, setPortfolioRefresh] = useState(0);
-
-  // Track previous prices so we can compare and trigger a flash
-  // when the value changes between polls.
   const previousPricesRef = useRef({});
 
   const fetchPrices = async () => {
     try {
       const response = await getMarketPrices();
       const newPrices = response.data.prices;
-
       const newFlashMap = {};
       newPrices.forEach((p) => {
         const prev = previousPricesRef.current[p.symbol];
@@ -31,12 +27,9 @@ export default function Dashboard() {
         }
         previousPricesRef.current[p.symbol] = current;
       });
-
       setPrices(newPrices);
-
       if (Object.keys(newFlashMap).length > 0) {
         setFlashMap(newFlashMap);
-        // Flash lasts ~800ms then clears — enough to notice but not distracting.
         setTimeout(() => setFlashMap({}), 800);
       }
     } catch (error) {
@@ -50,88 +43,73 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleRowClick = (symbol) => {
-    setSelectedSymbol(symbol);
-  };
-
-  const closeTradeModal = () => {
-    setSelectedSymbol(null);
-  };
-
+  const handleRowClick = (symbol) => setSelectedSymbol(symbol);
+  const closeTradeModal = () => setSelectedSymbol(null);
   const handleTradeSuccess = () => {
     fetchPrices();
     setPortfolioRefresh((prev) => prev + 1);
   };
 
-  return (
-    <div className="dashboard-page">
+  return (<div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '40px' }}>
       <Header />
-
-      <button
-        className={`ai-fab ${isChatOpen ? 'ai-fab-hidden' : ''}`}
-        onClick={() => setIsChatOpen(true)}
-        title="AI Asistanı"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      
+      <button className="ai-fab" onClick={() => setIsChatOpen(true)} title="AI Asistanı">
+        {/* Hata veren kütüphane yerine temiz bir SVG ikonu koyduk */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
         </svg>
       </button>
-
+      
       <AiInsights isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
-
-      <TradeModal
-        symbol={selectedSymbol}
-        isOpen={!!selectedSymbol}
-        onClose={closeTradeModal}
-        onTradeSuccess={handleTradeSuccess}
+      
+      <TradeModal 
+        symbol={selectedSymbol} 
+        isOpen={!!selectedSymbol} 
+        onClose={closeTradeModal} 
+        onTradeSuccess={handleTradeSuccess} 
       />
-
-      <div className="dashboard-wrapper">
+      
+      {/* Portföy Kartı - Çökmeyen Neon Çerçeve */}
+      <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '10px', marginBottom: '24px' }}>
         <PortfolioWidget refreshTrigger={portfolioRefresh} />
-
-        <h2 className="dashboard-title">Canlı Piyasa Fiyatları</h2>
-        <table className="price-table">
-          <thead>
-            <tr>
-              <th>Sembol</th>
-              <th>Fiyat ($)</th>
-              <th>24s Değişim</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prices.map((item, index) => {
-              const flashClass = flashMap[item.symbol]
-                ? `price-flash-${flashMap[item.symbol]}`
-                : '';
-              return (
-                <tr
-                  key={index}
-                  className={`price-row ${flashClass}`}
-                  onClick={() => handleRowClick(item.symbol)}
-                  title={`${item.symbol} işlemi için tıkla`}
-                >
-                  <td className="symbol-cell">
-                    <img
-                      src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
-                      alt={item.symbol}
-                      className="coin-logo"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png';
-                      }}
-                    />
-                    <strong>{item.symbol}</strong>
-                  </td>
-                  <td>{parseFloat(item.price).toFixed(2)}</td>
-                  <td style={{ color: item.change24h >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
-                    {item.change24h > 0 ? '+' : ''}{parseFloat(item.change24h).toFixed(2)}%
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
       </div>
-    </div>
-  );
+
+      {/* Tablo Kartı - Çökmeyen Neon Çerçeve */}
+      <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '20px' }}>
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '15px', fontWeight: 'bold', color: 'var(--text-hi)' }}>Canlı Piyasa Fiyatları</h2>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="price-table">
+            <thead>
+              <tr>
+                <th>Sembol</th>
+                <th>Fiyat ($)</th>
+                <th>24s Değişim</th>
+              </tr>
+            </thead>
+            <tbody>
+              {prices.map((item, index) => {
+                const isUp = item.change24h >= 0;
+                return (
+                  <tr key={index} className="price-row" onClick={() => handleRowClick(item.symbol)}>
+                    <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <img 
+                        src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} 
+                        alt={item.symbol} 
+                        className="coin-logo" 
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png'; }} 
+                      />
+                      <strong>{item.symbol}</strong>
+                    </td>
+                    <td>{parseFloat(item.price).toFixed(2)}</td>
+                    <td style={{ color: isUp ? 'var(--up)' : 'var(--down)', fontWeight: 'bold' }}>
+                      {isUp ? '+' : ''}{parseFloat(item.change24h).toFixed(2)}%
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>);
 }

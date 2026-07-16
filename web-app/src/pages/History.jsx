@@ -39,41 +39,37 @@ export default function History() {
     });
   };
 
-  return (
-    <div className="history-page">
+  return (<div className="history-page">
       <Header />
 
-      <div className="history-wrapper">
-        <h2 className="history-title">İşlem Geçmişi</h2>
+      <div className="history-wrapper" style={{ maxWidth: '1100px', margin: '0 auto', padding: '20px' }}>
+        <h2 className="history-title" style={{ color: 'var(--text-hi)', marginBottom: '24px' }}>İşlem Geçmişi</h2>
 
-        <div className="history-stats">
-          <div className="history-stat-card">
-            <div className="history-stat-label">Toplam İşlem</div>
-            <div className="history-stat-value">{totalTrades}</div>
-          </div>
-          <div className="history-stat-card">
-            <div className="history-stat-label">Alım</div>
-            <div className="history-stat-value history-buy-color">{buyCount}</div>
-          </div>
-          <div className="history-stat-card">
-            <div className="history-stat-label">Satım</div>
-            <div className="history-stat-value history-sell-color">{sellCount}</div>
-          </div>
-          <div className="history-stat-card">
-            <div className="history-stat-label">Toplam Hacim</div>
-            <div className="history-stat-value">${totalVolume.toFixed(2)}</div>
-          </div>
+        {/* İstatistikler - Neon Glow Kartlar */}
+        <div className="history-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '24px' }}>
+          {[
+            { label: 'Toplam İşlem', value: totalTrades },
+            { label: 'Alım', value: buyCount, color: 'var(--up)' },
+            { label: 'Satım', value: sellCount, color: 'var(--down)' },
+            { label: 'Toplam Hacim', value: `$${totalVolume.toFixed(2)}` }
+          ].map((stat, i) => (
+            <div key={i} className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '16px' }}>
+              <div className="history-stat-label" style={{ color: 'var(--text-lo)', fontSize: '0.78rem', marginBottom: '6px' }}>{stat.label}</div>
+              <div className="history-stat-value" style={{ color: stat.color || 'var(--text-hi)', fontSize: '1.4rem', fontWeight: '700' }}>{stat.value}</div>
+            </div>
+          ))}
         </div>
 
-        <div className="history-list-container">
+        {/* Tablo - Neon Glow Kapsayıcı */}
+        <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', overflow: 'hidden' }}>
           {loading ? (
-            <div className="history-empty">Yükleniyor...</div>
+            <div className="history-empty" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-mid)' }}>Yükleniyor...</div>
           ) : error ? (
-            <div className="history-error">{error}</div>
+            <div className="history-error" style={{ padding: '40px', textAlign: 'center', color: 'var(--down)' }}>{error}</div>
           ) : transactions.length === 0 ? (
-            <div className="history-empty">
+            <div className="history-empty" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-mid)' }}>
               <p>Henüz işlem yapılmamış.</p>
-              <p className="history-empty-hint">
+              <p className="history-empty-hint" style={{ color: 'var(--accent)', fontStyle: 'italic', fontSize: '0.9rem' }}>
                 Dashboard'dan bir kripto seçip işlem yapabilirsin.
               </p>
             </div>
@@ -121,6 +117,5 @@ export default function History() {
           )}
         </div>
       </div>
-    </div>
-  );
+    </div>);
 }

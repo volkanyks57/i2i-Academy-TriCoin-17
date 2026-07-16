@@ -43,4 +43,11 @@ export const executeTrade = (symbol, side, amount) => {
   return api.post('/trade/execute', { symbol, side, amount });
 };
 
+export const createPriceAlert = (alertData) => {
+  return api.post('/alerts', alertData);
+};
+
 export default api;
+
+export const getTriggeredAlerts = () => api.get('/alerts/triggered');
+export const dismissAlert = (id) => api.delete(`/alerts/${id}`);

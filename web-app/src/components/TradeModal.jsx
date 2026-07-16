@@ -14,10 +14,9 @@ import {
   executeTrade,
   getPortfolio,
   getPriceHistory,
+  createPriceAlert,
 } from '../services/api';
 
-// Backend error messages come in English (see TradingService.java) —
-// this maps the known ones to Turkish so the UI stays consistent.
 const translateError = (message) => {
   if (!message) return 'İşlem gerçekleştirilemedi.';
 
@@ -51,16 +50,21 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  // Auto-dismiss the error toast after a few seconds so it doesn't
-  // linger on screen once the user has read it.
+  const [success, setSuccess] = useState(null);
+  const [historyHours, setHistoryHours] = useState(24);
+  const [secondsLeft, setSecondsLeft] = useState(30);
+
+  // --- YENİ EKLENEN STATE'LER (ALARM İÇİN) ---
+  const [alertPrice, setAlertPrice] = useState('');
+  const [alertDirection, setAlertDirection] = useState('ABOVE');
+  const [alertSuccessMessage, setAlertSuccessMessage] = useState('');
+  // ------------------------------------------
+
   useEffect(() => {
     if (!error) return;
     const timer = setTimeout(() => setError(''), 4000);
     return () => clearTimeout(timer);
   }, [error]);
-  const [success, setSuccess] = useState(null);
-  const [historyHours, setHistoryHours] = useState(24);
-  const [secondsLeft, setSecondsLeft] = useState(30);
 
   useEffect(() => {
     if (!isOpen || !symbol) return;
@@ -71,6 +75,10 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
     setSuccess(null);
     setSecondsLeft(30);
     setLoading(true);
+
+    // Alarm state'lerini sıfırla
+    setAlertPrice('');
+    setAlertSuccessMessage('');
 
     Promise.all([
       getTradeQuote(symbol),
@@ -97,9 +105,6 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
       .finally(() => setLoading(false));
   }, [isOpen, symbol, historyHours]);
 
-  // Live countdown for the locked price. When it hits 0, silently
-  // fetch a fresh quote and restart the countdown — the user never
-  // has to manually refresh.
   useEffect(() => {
     if (!isOpen || !quote) return;
 
@@ -131,8 +136,6 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
   const numericAmount = parseFloat(amount) || 0;
   const totalValue = quote ? numericAmount * parseFloat(quote.price) : 0;
 
-  // Compute % change over the visible history window — the header shows
-  // it in green or red as a quick trend indicator next to the price.
   const firstPrice = history.length > 0 ? history[0].price : null;
   const lastPrice = history.length > 0 ? history[history.length - 1].price : null;
   const priceChange =
@@ -160,6 +163,27 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
       setLoading(false);
     }
   };
+
+  // --- YENİ EKLENEN API ÇAĞRISI (ALARM KURMAK İÇİN) ---
+  const handleCreateAlert = async () => {
+  if (!alertPrice) return;
+  
+
+  try {
+    await createPriceAlert({
+      username: "test", 
+      symbol: symbol,
+      targetPrice: parseFloat(alertPrice),
+      alertDirection: alertDirection
+    });
+    setAlertSuccessMessage('Alarm başarıyla kuruldu!');
+    setAlertPrice('');
+    setTimeout(() => setAlertSuccessMessage(''), 3000);
+  } catch (err) {
+    setError('Alarm kurulurken hata oluştu.');
+  }
+};
+  // --------------------------------------------------
 
   return (
     <div className="trade-modal-overlay" onClick={onClose}>
@@ -220,9 +244,8 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                   </div>
                   {history.length > 0 && (
                     <div
-                      className={`trade-chart-change ${
-                        isPositive ? 'positive' : 'negative'
-                      }`}
+                      className={`trade-chart-change ${isPositive ? 'positive' : 'negative'
+                        }`}
                     >
                       {isPositive ? '▲' : '▼'} {Math.abs(priceChange).toFixed(2)}%
                       <span className="trade-chart-change-label">
@@ -235,9 +258,8 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                   {[1, 6, 24].map((h) => (
                     <button
                       key={h}
-                      className={`trade-range-btn ${
-                        historyHours === h ? 'active' : ''
-                      }`}
+                      className={`trade-range-btn ${historyHours === h ? 'active' : ''
+                        }`}
                       onClick={() => setHistoryHours(h)}
                     >
                       {h}s
@@ -328,12 +350,50 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                     </div>
                   </div>
 
+                  {/* --- YENİ EKLENEN: FİYAT ALARMI BÖLÜMÜ --- */}
+                  <div style={{ marginTop: '15px', marginBottom: '20px', padding: '12px', backgroundColor: 'rgba(167, 139, 250, 0.05)', border: '1px solid rgba(167, 139, 250, 0.2)', borderRadius: '8px' }}>
+                    <h4 style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#a78bfa', fontWeight: '600' }}>
+                      🔔 Fiyat Alarmı Kur
+                    </h4>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Hedef Fiyat ($)"
+                        value={alertPrice}
+                        onChange={(e) => setAlertPrice(e.target.value)}
+                        style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', outline: 'none' }}
+                      />
+                      <select
+                        value={alertDirection}
+                        onChange={(e) => setAlertDirection(e.target.value)}
+                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', outline: 'none' }}
+                      >
+                        <option value="ABOVE">Üstüne Çıkarsa</option>
+                        <option value="BELOW">Altına Düşerse</option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={handleCreateAlert}
+                      disabled={!alertPrice}
+                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: 'none', background: alertPrice ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255,255,255,0.05)', color: alertPrice ? '#c4a7ff' : '#666', cursor: alertPrice ? 'pointer' : 'not-allowed', fontWeight: '500', transition: 'all 0.2s' }}
+                    >
+                      {alertPrice ? 'Alarmı Kaydet' : 'Fiyat Giriniz'}
+                    </button>
+                    {alertSuccessMessage && (
+                      <div style={{ marginTop: '8px', color: '#4ade80', fontSize: '0.8rem', textAlign: 'center' }}>
+                        {alertSuccessMessage}
+                      </div>
+                    )}
+                  </div>
+                  {/* -------------------------------------- */}
+
                   <div className="trade-side-buttons">
                     {canBuy && (
                       <button
-                        className={`trade-side-btn trade-buy ${
-                          side === 'BUY' ? 'active' : ''
-                        }`}
+                        className={`trade-side-btn trade-buy ${side === 'BUY' ? 'active' : ''
+                          }`}
                         onClick={() => setSide('BUY')}
                       >
                         AL
@@ -341,9 +401,8 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                     )}
                     {canSell && (
                       <button
-                        className={`trade-side-btn trade-sell ${
-                          side === 'SELL' ? 'active' : ''
-                        }`}
+                        className={`trade-side-btn trade-sell ${side === 'SELL' ? 'active' : ''
+                          }`}
                         onClick={() => setSide('SELL')}
                       >
                         SAT
