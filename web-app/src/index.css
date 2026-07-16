@@ -2313,3 +2313,65 @@ body {
 .trade-modal {
   border-radius: 16px;
 }
+
+[data-theme='light'] .auth-page {
+  background: #eef4ff;
+}
+
+[data-theme='light'] .auth-card {
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme='light'] .auth-title {
+  color: #0b1530;
+}
+
+[data-theme='light'] .auth-subtitle {
+  color: #64748b;
+}
+
+[data-theme='light'] .auth-input {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme='light'] .auth-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme='light'] .theme-toggle-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme='light'] .auth-footer {
+  color: #64748b;
+}
+
+[data-theme='light'] .auth-footer .auth-link {
+  color: #6d28d9;
+}
+
+[data-theme='light'] .auth-password-toggle {
+  color: #64748b;
+}
+
+[data-theme='light'] .auth-password-toggle:hover {
+  color: #1e293b;
+}
+
+[data-theme='light'] .auth-label {
+  color: #475569;
+}
+
+[data-theme='dark'] .auth-input {
+  border: 1.5px solid rgba(167, 139, 250, 0.45);
+}
+
+[data-theme='dark'] .auth-input:focus {
+  border-color: #a78bfa;
+}
