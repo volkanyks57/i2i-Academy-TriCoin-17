@@ -1,4 +1,5 @@
 // src/components/TradeModal.jsx
+import { useTheme } from '../hooks/useTheme';
 import React, { useState, useEffect } from 'react';
 import {
   LineChart,
@@ -43,6 +44,12 @@ const translateError = (message) => {
 };
 
 const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
+  const { theme } = useTheme();
+  const axisColor = theme === 'light' ? 'rgba(30, 41, 59, 0.5)' : 'rgba(255, 255, 255, 0.4)';
+  const tickColor = theme === 'light' ? 'rgba(30, 41, 59, 0.65)' : 'rgba(255,255,255,0.5)';
+  const tooltipBg = theme === 'light' ? '#ffffff' : 'rgba(20, 15, 35, 0.95)';
+  const tooltipTextColor = theme === 'light' ? '#1e293b' : '#fff';
+  const tooltipLabelColor = theme === 'light' ? '#475569' : 'rgba(255,255,255,0.6)';
   const [quote, setQuote] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
   const [history, setHistory] = useState([]);
@@ -293,26 +300,26 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                       />
                       <XAxis
                         dataKey="time"
-                        stroke="rgba(255, 255, 255, 0.4)"
+                        stroke={axisColor}
                         style={{ fontSize: '0.72rem' }}
-                        tick={{ fill: 'rgba(255,255,255,0.5)' }}
+                        tick={{ fill: tickColor }}
                         minTickGap={30}
                       />
                       <YAxis
-                        stroke="rgba(255, 255, 255, 0.4)"
+                        stroke={axisColor}
                         style={{ fontSize: '0.72rem' }}
-                        tick={{ fill: 'rgba(255,255,255,0.5)' }}
+                        tick={{ fill: tickColor }}
                         domain={['auto', 'auto']}
                         width={60}
                       />
                       <Tooltip
                         contentStyle={{
-                          background: 'rgba(20, 15, 35, 0.95)',
+                          background: tooltipBg,
                           border: '1px solid rgba(167, 139, 250, 0.3)',
                           borderRadius: '8px',
-                          color: '#fff',
+                          color: tooltipTextColor,
                         }}
-                        labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+                        labelStyle={{ color: tooltipLabelColor }}
                         formatter={(value) => [`$${value.toFixed(2)}`, 'Fiyat']}
                       />
                       <Line
@@ -351,11 +358,11 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                   </div>
 
                   {/* --- YENİ EKLENEN: FİYAT ALARMI BÖLÜMÜ --- */}
-                  <div style={{ marginTop: '15px', marginBottom: '20px', padding: '12px', backgroundColor: 'rgba(167, 139, 250, 0.05)', border: '1px solid rgba(167, 139, 250, 0.2)', borderRadius: '8px' }}>
-                    <h4 style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#a78bfa', fontWeight: '600' }}>
+                  <div className="trade-alert-box">
+                    <h4 className="trade-alert-title">
                       🔔 Fiyat Alarmı Kur
                     </h4>
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                    <div className="trade-alert-row">
                       <input
                         type="number"
                         min="0"
@@ -363,12 +370,12 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                         placeholder="Hedef Fiyat ($)"
                         value={alertPrice}
                         onChange={(e) => setAlertPrice(e.target.value)}
-                        style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', outline: 'none' }}
+                        className="trade-alert-input"
                       />
                       <select
                         value={alertDirection}
                         onChange={(e) => setAlertDirection(e.target.value)}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', outline: 'none' }}
+                        className="trade-alert-select"
                       >
                         <option value="ABOVE">Üstüne Çıkarsa</option>
                         <option value="BELOW">Altına Düşerse</option>
@@ -377,12 +384,12 @@ const TradeModal = ({ symbol, isOpen, onClose, onTradeSuccess }) => {
                     <button
                       onClick={handleCreateAlert}
                       disabled={!alertPrice}
-                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: 'none', background: alertPrice ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255,255,255,0.05)', color: alertPrice ? '#c4a7ff' : '#666', cursor: alertPrice ? 'pointer' : 'not-allowed', fontWeight: '500', transition: 'all 0.2s' }}
+                      className="trade-alert-btn"
                     >
                       {alertPrice ? 'Alarmı Kaydet' : 'Fiyat Giriniz'}
                     </button>
                     {alertSuccessMessage && (
-                      <div style={{ marginTop: '8px', color: '#4ade80', fontSize: '0.8rem', textAlign: 'center' }}>
+                      <div className="trade-alert-success">
                         {alertSuccessMessage}
                       </div>
                     )}

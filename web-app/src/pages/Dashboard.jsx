@@ -71,7 +71,10 @@ export default function Dashboard() {
       
       {/* Portföy Kartı - Çökmeyen Neon Çerçeve */}
       <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '10px', marginBottom: '24px' }}>
-        <PortfolioWidget refreshTrigger={portfolioRefresh} />
+        <PortfolioWidget
+          refreshTrigger={portfolioRefresh}
+          onOpenAiChat={() => setIsChatOpen(true)}
+        />
       </div>
 
       {/* Tablo Kartı - Çökmeyen Neon Çerçeve */}

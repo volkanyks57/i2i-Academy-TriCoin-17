@@ -2,15 +2,29 @@
 import React, { useEffect, useState } from 'react';
 import { getPortfolio, getMarketPrices } from '../services/api';
 
-const PortfolioWidget = ({ refreshTrigger }) => {
+const AI_SUGGESTIONS = [
+  { icon: '💬', text: 'Portföyünle ilgili sor' },
+  { icon: '📊', text: 'En çok kazandıran hangisi?' },
+  { icon: '💡', text: 'Bugün ne almalıyım?' },
+  { icon: '📉', text: 'Zararımı nasıl azaltırım?' },
+  { icon: '🧠', text: 'Portföyüm ne kadar riskli?' },
+];
+
+const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
   const [portfolio, setPortfolio] = useState(null);
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
 
   useEffect(() => {
-    // Decode username from JWT — the token is a base64-encoded payload,
-    // so we can peek at the "sub" claim without hitting the backend.
+    const rotate = setInterval(() => {
+      setSuggestionIndex((i) => (i + 1) % AI_SUGGESTIONS.length);
+    }, 15000);
+    return () => clearInterval(rotate);
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem('session_token');
     if (token) {
       try {
@@ -32,7 +46,10 @@ const PortfolioWidget = ({ refreshTrigger }) => {
         setPortfolio(portfolioRes.data);
         const priceMap = {};
         pricesRes.data.prices.forEach((p) => {
-          priceMap[p.symbol] = parseFloat(p.price);
+          priceMap[p.symbol] = {
+            price: parseFloat(p.price),
+            change24h: parseFloat(p.change24h) || 0,
+          };
         });
         setPrices(priceMap);
       } catch (error) {
@@ -60,13 +77,59 @@ const PortfolioWidget = ({ refreshTrigger }) => {
   const balanceUsd = parseFloat(portfolio.balanceUsd);
   const holdings = portfolio.holdings || [];
 
-  // Total portfolio value = USD balance + sum of (holding amount × current price).
   const cryptoValue = holdings.reduce((sum, h) => {
-    const price = prices[h.symbol] || 0;
+    const price = prices[h.symbol]?.price || 0;
     return sum + parseFloat(h.amount) * price;
   }, 0);
 
   const totalValue = balanceUsd + cryptoValue;
+
+  const dailyChangeUsd = holdings.reduce((sum, h) => {
+    const info = prices[h.symbol];
+    if (!info) return sum;
+    const value = parseFloat(h.amount) * info.price;
+    return sum + value * (info.change24h / 100);
+  }, 0);
+  const dailyChangePercent = totalValue > 0 ? (dailyChangeUsd / totalValue) * 100 : 0;
+
+  let bestPerformer = null;
+  let worstPerformer = null;
+  holdings.forEach((h) => {
+    const info = prices[h.symbol];
+    if (!info) return;
+    if (!bestPerformer || info.change24h > prices[bestPerformer.symbol]?.change24h) {
+      bestPerformer = h;
+    }
+    if (!worstPerformer || info.change24h < prices[worstPerformer.symbol]?.change24h) {
+      worstPerformer = h;
+    }
+  });
+
+  const DONUT_COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#fbbf24', '#f472b6', '#f87171', '#38bdf8', '#facc15'];
+
+  const donutSegments = holdings
+    .map((h) => ({
+      label: h.symbol,
+      value: parseFloat(h.amount) * (prices[h.symbol]?.price || 0),
+    }))
+    .concat([{ label: 'USD', value: balanceUsd }])
+    .filter((s) => s.value > 0)
+    .sort((a, b) => b.value - a.value);
+
+  let cumulative = 0;
+  const gradientStops = donutSegments.map((s, i) => {
+    const share = totalValue > 0 ? (s.value / totalValue) * 100 : 0;
+    const start = cumulative;
+    cumulative += share;
+    const color = s.label === 'USD' ? 'rgba(148,163,184,0.55)' : DONUT_COLORS[i % DONUT_COLORS.length];
+    return { color, start, end: cumulative, label: s.label, share };
+  });
+
+  const donutStyle = {
+    background: `conic-gradient(${gradientStops
+      .map((g) => `${g.color} ${g.start}% ${g.end}%`)
+      .join(', ')})`,
+  };
 
   return (
     <div className="portfolio-widget">
@@ -76,7 +139,7 @@ const PortfolioWidget = ({ refreshTrigger }) => {
             {username.charAt(0).toUpperCase() || '?'}
           </div>
           <div>
-            <div className="portfolio-username">{username}</div>
+            <div className="portfolio-username">Merhaba, {username || 'kullanıcı'} 👋</div>
             <div className="portfolio-subtitle">Portföyüm</div>
           </div>
         </div>
@@ -90,10 +153,76 @@ const PortfolioWidget = ({ refreshTrigger }) => {
 
       <div className="portfolio-breakdown">
         <div className="portfolio-balance-card">
-          <div className="portfolio-card-label">USD Bakiye</div>
-          <div className="portfolio-card-value">
-            ${balanceUsd.toFixed(2)}
+          <div className="portfolio-quad-grid">
+            <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-performer">
+              <div className="portfolio-card-label">USD Bakiye</div>
+              <div className="portfolio-card-value">
+                ${balanceUsd.toFixed(2)}
+              </div>
+              <div className={`portfolio-daily-change ${dailyChangePercent >= 0 ? 'positive' : 'negative'}`}>
+                <span className="portfolio-daily-arrow">
+                  {dailyChangePercent >= 0 ? '▲' : '▼'}
+                </span>
+                <span>
+                  {dailyChangePercent >= 0 ? '+' : ''}
+                  ${dailyChangeUsd.toFixed(2)} ({dailyChangePercent >= 0 ? '+' : ''}
+                  {dailyChangePercent.toFixed(2)}%)
+                </span>
+              </div>
+            </div>
+
+            <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-donut">
+              {gradientStops.length > 0 ? (
+                <>
+                  <div className="portfolio-mini-donut" style={donutStyle} />
+                  <div className="portfolio-mini-donut-legend">
+                    {gradientStops.map((g) => (
+                      <div key={g.label}>
+                        <span className="dot" style={{ background: g.color }} />
+                        {g.label} {g.share.toFixed(0)}%
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="portfolio-empty">Henüz kripto yok</div>
+              )}
+            </div>
+
+            <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-performer">
+              {bestPerformer ? (
+                <div className="portfolio-performer-line positive">
+                  📈 En çok kazandıran<br />
+                  <strong>{bestPerformer.symbol}</strong>{' '}
+                  ({prices[bestPerformer.symbol].change24h >= 0 ? '+' : ''}
+                  {prices[bestPerformer.symbol].change24h.toFixed(2)}%)
+                </div>
+              ) : (
+                <div className="portfolio-empty">—</div>
+              )}
+            </div>
+
+            <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-performer">
+              {worstPerformer ? (
+                <div className="portfolio-performer-line negative">
+                  📉 En çok kaybettiren<br />
+                  <strong>{worstPerformer.symbol}</strong>{' '}
+                  ({prices[worstPerformer.symbol].change24h >= 0 ? '+' : ''}
+                  {prices[worstPerformer.symbol].change24h.toFixed(2)}%)
+                </div>
+              ) : (
+                <div className="portfolio-empty">—</div>
+              )}
+            </div>
           </div>
+
+          {onOpenAiChat && (
+            <button className="portfolio-ai-cta" onClick={onOpenAiChat}>
+              <span key={suggestionIndex} className="portfolio-ai-cta-text">
+                {AI_SUGGESTIONS[suggestionIndex].icon} {AI_SUGGESTIONS[suggestionIndex].text} → AI Asistanı
+              </span>
+            </button>
+          )}
         </div>
 
         <div className="portfolio-holdings-card">
@@ -108,7 +237,7 @@ const PortfolioWidget = ({ refreshTrigger }) => {
           ) : (
             <div className="portfolio-holdings-list">
               {holdings.map((h, i) => {
-                const price = prices[h.symbol] || 0;
+                const price = prices[h.symbol]?.price || 0;
                 const value = parseFloat(h.amount) * price;
                 return (
                   <div key={i} className="portfolio-holding-item">
