@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
+import ProfileMenu from './ProfileMenu';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function Header() {
             </svg>
             <span>Geçmiş</span>
           </button>
+          <ProfileMenu />
 
           {/* YENİ: Tema Değiştirme Butonu */}
           <button className="app-nav-btn" onClick={toggleTheme} title="Tema Değiştir">
