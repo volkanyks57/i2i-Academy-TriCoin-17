@@ -665,16 +665,17 @@ body {
 }
 
 .portfolio-total-value {
-  color: #ffffff;
-  font-size: 1.35rem;
-  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1.4rem;
+  font-weight: 800;
   margin-top: 2px;
 }
 
 .portfolio-breakdown {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.35fr;
   gap: 12px;
+  align-items: stretch;
 }
 
 .portfolio-balance-card,
@@ -683,6 +684,9 @@ body {
   background: var(--bg-inner);
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .portfolio-card-label {
@@ -690,15 +694,15 @@ body {
   align-items: center;
   justify-content: space-between;
   color: var(--text-secondary);
-  font-size: 0.78rem;
-  margin-bottom: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
   letter-spacing: 0.3px;
 }
 
 .portfolio-card-value {
   color: var(--text-main);
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 .portfolio-holdings-count {
@@ -720,8 +724,8 @@ body {
 .portfolio-holdings-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 140px;
+  gap: 10px;
+  max-height: 330px;
   overflow-y: auto;
 }
 
@@ -734,20 +738,130 @@ body {
   border-radius: 2px;
 }
 
+.portfolio-quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.portfolio-quad-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64px;
+}
+
+.portfolio-quad-donut {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.portfolio-quad-panel {
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(124, 58, 237, 0.08) 100%);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 10px;
+}
+
+.portfolio-daily-change {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.portfolio-daily-change.positive { color: #10b981; }
+.portfolio-daily-change.negative { color: #ef4444; }
+
+.portfolio-daily-arrow { font-size: 0.7rem; }
+
+.portfolio-mini-donut {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.portfolio-mini-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.portfolio-mini-donut-legend .dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.portfolio-quad-performer {
+  align-items: center;
+  text-align: center;
+}
+
+.portfolio-performer-line {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.portfolio-performer-line strong { font-weight: 800; font-size: 1.05rem; }
+.portfolio-performer-line.positive { color: #10b981; }
+.portfolio-performer-line.negative { color: #ef4444; }
+
+.portfolio-ai-cta {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.22) 0%, rgba(124, 58, 237, 0.22) 100%);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+  overflow: hidden;
+}
+
+.portfolio-ai-cta:hover {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.35) 0%, rgba(124, 58, 237, 0.35) 100%);
+}
+
+.portfolio-ai-cta-text {
+  display: block;
+  animation: aiCtaFadeIn 0.4s ease;
+}
+
+@keyframes aiCtaFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .portfolio-holding-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 6px 8px;
+  padding: 9px 12px;
   background: rgba(167, 139, 250, 0.06);
   border-radius: 6px;
 }
 
 .portfolio-holding-symbol {
-  color: #c4a7ff;
-  font-size: 0.85rem;
-  font-weight: 700;
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 .portfolio-holding-info {
@@ -759,13 +873,15 @@ body {
 
 .portfolio-holding-amount {
   color: var(--text-main);
-  font-size: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 700;
   font-family: 'Courier New', monospace;
 }
 
 .portfolio-holding-value {
   color: var(--text-secondary);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -1007,6 +1123,67 @@ body {
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-style: italic;
+  text-align: center;
+}
+
+.trade-alert-box {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: var(--bg-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.trade-alert-title {
+  margin: 0 0 10px 0;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.trade-alert-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.trade-alert-input,
+.trade-alert-select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-main);
+  outline: none;
+}
+
+.trade-alert-input {
+  flex: 1;
+}
+
+.trade-alert-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: rgba(167, 139, 250, 0.2);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.trade-alert-btn:disabled {
+  background: var(--bg-inner);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.trade-alert-success {
+  margin-top: 8px;
+  color: #10b981;
+  font-size: 0.8rem;
   text-align: center;
 }
 
@@ -1871,6 +2048,25 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Light mode only: color portfolio numbers purple for readability
+   against the white cards (font-weight already comes from the base
+   rules above and applies in both themes). */
+[data-theme='light'] .portfolio-card-value,
+[data-theme='light'] .portfolio-total-value,
+[data-theme='light'] .portfolio-holding-amount,
+[data-theme='light'] .portfolio-holding-symbol,
+[data-theme='light'] .portfolio-mini-donut-legend {
+  color: #6d28d9;
+}
+
+[data-theme='light'] .portfolio-holding-value {
+  color: #8b5cf6;
+}
+
+[data-theme='light'] .portfolio-ai-cta {
+  color: #6d28d9;
+}
+
 /* 1. Base & Reset */
 body {
   margin: 0;
@@ -2077,4 +2273,43 @@ body {
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
+}
+
+[data-theme='light'] .trade-modal {
+  background: #ffffff;
+  border-color: rgba(37, 99, 235, 0.18);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme='light'] .trade-alert-box {
+  background: #eef2ff;
+  border: 1.5px solid #a5b4fc;
+}
+
+[data-theme='light'] .trade-alert-input,
+[data-theme='light'] .trade-alert-select {
+  background: #ffffff;
+  border: 1.5px solid #94a3b8;
+  color: #1e293b;
+}
+
+[data-theme='light'] .trade-alert-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme='light'] .trade-alert-btn {
+  background: #ede9fe;
+  border: 1.5px solid #a78bfa;
+  color: #6d28d9;
+  font-weight: 700;
+}
+
+[data-theme='light'] .trade-alert-btn:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1.5px solid #cbd5e1;
+}
+
+.trade-modal {
+  border-radius: 16px;
 }
