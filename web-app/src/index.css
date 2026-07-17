@@ -135,7 +135,7 @@ body {
 }
 
 .app-header-inner {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 14px 24px;
   display: flex;
@@ -2374,4 +2374,26 @@ body {
 
 [data-theme='dark'] .auth-input:focus {
   border-color: #a78bfa;
+}
+
+[data-theme='dark'] .app-header {
+  background: rgba(10, 8, 18, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.25) !important;
+}
+
+[data-theme='dark'] .app-nav-btn {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='dark'] .portfolio-subtitle,
+[data-theme='dark'] .portfolio-total-label {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+[data-theme='dark'] .app-brand-name {
+  background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

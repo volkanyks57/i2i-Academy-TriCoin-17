@@ -38,5 +38,5 @@ jwt:
 
 gemini:
   api-key: ${GEMINI_API_KEY:}
-  model: gemini-flash-lite-latest
+  model: gemini-3.1-flash-lite
   timeout-seconds: 30
