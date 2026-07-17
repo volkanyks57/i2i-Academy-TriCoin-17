@@ -3,13 +3,12 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 import ProfileMenu from './ProfileMenu';
+import NotificationPanel from './NotificationPanel'; // 1. Bileşeni import ettik
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-// Shared theme state/logic lives in useTheme() so Header, Login, and
-// Register all stay in sync instead of each keeping their own copy.
   const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
@@ -42,7 +41,6 @@ export default function Header() {
         </div>
 
         <nav className="app-nav">
-          {/* Dashboard Butonu */}
           <button
             className={`app-nav-btn ${isDashboard ? 'active' : ''}`}
             onClick={() => navigate('/dashboard')}
@@ -56,7 +54,6 @@ export default function Header() {
             <span>Dashboard</span>
           </button>
 
-          {/* Geçmiş Butonu */}
           <button
             className={`app-nav-btn ${isHistory ? 'active' : ''}`}
             onClick={() => navigate('/history')}
@@ -67,14 +64,16 @@ export default function Header() {
             </svg>
             <span>Geçmiş</span>
           </button>
+          
           <ProfileMenu />
 
-          {/* YENİ: Tema Değiştirme Butonu */}
+          {/* 2. Bildirim panelini buraya yerleştirdik */}
+          <NotificationPanel />
+
           <button className="app-nav-btn" onClick={toggleTheme} title="Tema Değiştir">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
 
-          {/* Çıkış Butonu */}
           <button
             className="app-nav-btn app-nav-logout"
             onClick={handleLogout}
