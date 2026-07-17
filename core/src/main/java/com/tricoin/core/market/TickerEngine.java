@@ -15,15 +15,35 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class TickerEngine implements PriceProvider {
 
-    private static final List<String> SYMBOLS = List.of("BTC", "ETH", "SOL", "XRP", "ADA");
+private static final List<String> SYMBOLS = List.of(
+    "BTC", "ETH", "SOL", "XRP", "ADA",
+    "DOT", "AVAX", "LINK", "UNI", "DOGE",
+    "LTC", "BNB", "MATIC", "XLM", "ATOM",
+    "NEAR", "FTM", "SAND", "MANA", "AXS"
+);
 
-    private static final Map<String, BigDecimal> BASE_PRICES = Map.of(
-        "BTC", new BigDecimal("67000"),
-        "ETH", new BigDecimal("3400"),
-        "SOL", new BigDecimal("150"),
-        "XRP", new BigDecimal("0.60"),
-        "ADA", new BigDecimal("0.45")
-    );
+private static final Map<String, BigDecimal> BASE_PRICES = Map.ofEntries(
+    Map.entry("BTC", new BigDecimal("67000")),
+    Map.entry("ETH", new BigDecimal("3400")),
+    Map.entry("SOL", new BigDecimal("150")),
+    Map.entry("XRP", new BigDecimal("0.60")),
+    Map.entry("ADA", new BigDecimal("0.45")),
+    Map.entry("DOT", new BigDecimal("7.00")),
+    Map.entry("AVAX", new BigDecimal("35.00")),
+    Map.entry("LINK", new BigDecimal("14.00")),
+    Map.entry("UNI", new BigDecimal("10.00")),
+    Map.entry("DOGE", new BigDecimal("0.15")),
+    Map.entry("LTC", new BigDecimal("85.00")),
+    Map.entry("BNB", new BigDecimal("580.00")),
+    Map.entry("MATIC", new BigDecimal("0.70")),
+    Map.entry("XLM", new BigDecimal("0.12")),
+    Map.entry("ATOM", new BigDecimal("8.00")),
+    Map.entry("NEAR", new BigDecimal("5.50")),
+    Map.entry("FTM", new BigDecimal("0.75")),
+    Map.entry("SAND", new BigDecimal("0.40")),
+    Map.entry("MANA", new BigDecimal("0.35")),
+    Map.entry("AXS", new BigDecimal("6.50"))
+);
 
     // 1. Değişiklik: Map artık sadece fiyat değil, MarketTicker (fiyat + değişim) tutuyor
     private final Map<String, MarketTicker> currentPrices = new ConcurrentHashMap<>();

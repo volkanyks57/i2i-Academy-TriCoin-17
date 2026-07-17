@@ -2,12 +2,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFavorites, getMarketPrices, removeFavorite } from '../services/api';
+import TradeModal from '../components/TradeModal';
+import Header from '../components/Header';
 
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
 
   const fetchAll = async () => {
     try {
@@ -48,13 +51,25 @@ export default function Favorites() {
     }
   };
 
+  const handleTradeSuccess = () => {
+    fetchAll();
+  };
+
   return (
+    <>
+    <Header />
+    <TradeModal
+      symbol={selectedSymbol}
+      isOpen={!!selectedSymbol}
+      onClose={() => setSelectedSymbol(null)}
+      onTradeSuccess={handleTradeSuccess}
+    />
     <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '40px' }}>
       <div style={{ padding: '30px 20px 20px 20px' }}>
         <h2 style={{ fontSize: '1.5rem', color: 'var(--text-hi)', margin: '0 0 24px 0' }}>
           ⭐ Favorilerim
         </h2>
-
+    
         <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '20px' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-mid)' }}>
@@ -72,7 +87,7 @@ export default function Favorites() {
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table className="price-table">
+              <table className="price-table favorites-table">
                 <thead>
                   <tr>
                     <th>Sembol</th>
@@ -101,16 +116,25 @@ export default function Favorites() {
                           {priceData ? `${isUp ? '+' : ''}${priceData.change24h.toFixed(2)}%` : '—'}
                         </td>
                         <td style={{ textAlign: 'right' }}>
-                          <button
-                            className="favorite-remove-btn"
-                            onClick={(e) => handleRemove(symbol, e)}
-                            title="Favorilerden çıkar"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"></path>
-                            </svg>
-                          </button>
+                          <div style={{ display: 'flex', gap: '20px', justifyContent: 'flex-end' }}>
+                            <button
+                              className="favorite-trade-btn"
+                              onClick={(e) => { e.stopPropagation(); setSelectedSymbol(symbol); }}
+                              title="İşlem yap"
+                            >
+                              İşlem Yap
+                            </button>
+                            <button
+                              className="favorite-remove-btn"
+                              onClick={(e) => handleRemove(symbol, e)}
+                              title="Favorilerden çıkar"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"></path>
+                              </svg>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -122,5 +146,6 @@ export default function Favorites() {
         </div>
       </div>
     </div>
+    </>
   );
 }

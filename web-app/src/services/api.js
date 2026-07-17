@@ -29,6 +29,8 @@ export const getAiInsight = (query) => {
   return api.post('/ai/query', { message: query });
 };
 
+export const getPortfolioHealthScore = () => api.get('/ai/health-score');
+
 // Portfolio
 export const getPortfolio = () => {
   return api.get('/portfolio');

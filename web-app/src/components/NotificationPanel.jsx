@@ -26,12 +26,23 @@ const NotificationPanel = () => {
     };
 
     return (
-        <div style={{ position: 'relative', marginRight: '20px' }}>
+        <div style={{ position: 'relative' }}>
             {/* Bildirim Zili */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', position: 'relative' }}
-            >
+        <button
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                cursor: 'pointer',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '9px',
+                fontSize: '1rem',
+            }}
+        >
                 🔔
                 {alerts.length > 0 && (
                     <span style={{ position: 'absolute', top: '-5px', right: '-5px', background: '#ff4466', borderRadius: '50%', width: '15px', height: '15px', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

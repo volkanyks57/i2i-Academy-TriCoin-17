@@ -11,6 +11,9 @@ import com.tricoin.core.trading.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import com.tricoin.core.ai.dto.HealthScoreResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 
 import java.util.List;
 
@@ -55,4 +58,58 @@ public class AiInsightsService {
         log.info("Sending AI query for user {} ({} chars)", username, prompt.length());
         return geminiClient.generate(prompt);
     }
+    public HealthScoreResponse getHealthScore(String username) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new IllegalStateException("User not found"));
+
+    Wallet wallet = walletRepository.findByUserId(user.getId())
+        .orElseThrow(() -> new IllegalStateException("Wallet not found"));
+
+    List<CryptoHolding> holdings = cryptoHoldingRepository.findByUserId(user.getId());
+
+    List<Transaction> allTransactions =
+        transactionRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+    List<Transaction> recentTransactions = allTransactions.size() > RECENT_TX_LIMIT
+        ? allTransactions.subList(0, RECENT_TX_LIMIT)
+        : allTransactions;
+
+    String question = "Portföyümün sağlık skorunu değerlendir.";
+    String basePrompt = promptBuilder.build(user, wallet, holdings, recentTransactions, question);
+
+    String scorePrompt = basePrompt + "\n\n"
+        + "ÖZEL TALİMAT: Yukarıdaki veriye dayanarak portföyün genel sağlığını değerlendir "
+        + "(çeşitlendirme, risk yoğunlaşması, USD/kripto dengesi, son performans). "
+        + "SADECE aşağıdaki JSON formatında, başka HİÇBİR METİN eklemeden cevap ver "
+        + "(açıklama, markdown kod bloğu, yorum satırı YOK — sadece ham JSON):\n"
+        + "{\"score\": <0-100 arası tam sayı>, "
+        + "\"summary\": \"<tek cümlelik özet, Türkçe>\", "
+        + "\"strengths\": [\"<güçlü yön 1>\", \"<güçlü yön 2>\"], "
+        + "\"risks\": [\"<risk 1>\", \"<risk 2>\"]}";
+
+    log.info("Requesting health score for user {}", username);
+    String rawResponse = geminiClient.generate(scorePrompt);
+
+    return parseHealthScore(rawResponse);
+}
+
+private HealthScoreResponse parseHealthScore(String rawResponse) {
+    try {
+        // Gemini bazen JSON'ı ```json ... ``` içine sarabiliyor, temizleyelim.
+        String cleaned = rawResponse
+            .replaceAll("(?s)```json", "")
+            .replaceAll("(?s)```", "")
+            .trim();
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(cleaned, HealthScoreResponse.class);
+    } catch (Exception e) {
+        log.error("Health score JSON parse failed: {}", e.getMessage());
+        return new HealthScoreResponse(
+            50,
+            "Portföy analizi şu an oluşturulamadı.",
+            Collections.emptyList(),
+            Collections.emptyList()
+        );
+    }
+}
 }

@@ -1,6 +1,7 @@
 // src/components/PortfolioWidget.jsx
 import React, { useEffect, useState } from 'react';
 import { getPortfolio, getMarketPrices } from '../services/api';
+import PortfolioHealthScore from './PortfolioHealthScore';
 
 const AI_SUGGESTIONS = [
   { icon: '💬', text: 'Portföyünle ilgili sor' },
@@ -168,9 +169,12 @@ const goToNextSuggestion = () => {
           </div>
         </div>
         <div className="portfolio-total">
-          <div className="portfolio-total-label">Toplam Değer</div>
-          <div className="portfolio-total-value">
-            ${totalValue.toFixed(2)}
+          <PortfolioHealthScore />
+          <div className="portfolio-total-text">
+            <div className="portfolio-total-label">Toplam Değer</div>
+            <div className="portfolio-total-value">
+              ${totalValue.toFixed(2)}
+            </div>
           </div>
         </div>
       </div>
