@@ -2930,3 +2930,17 @@ body {
   background: rgba(226, 232, 240, 0.75);
   backdrop-filter: blur(6px);
 }
+
+[data-theme='light'] .portfolio-total-label {
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+[data-theme='light'] .portfolio-subtitle {
+  color: #64748b;
+}
+
+[data-theme='light'] .portfolio-username {
+  color: #1e293b;
+}
