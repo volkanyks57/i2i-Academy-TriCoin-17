@@ -47,6 +47,19 @@ export const createPriceAlert = (alertData) => {
   return api.post('/alerts', alertData);
 };
 
+// Favorites
+export const getFavorites = () => {
+  return api.get('/favorites');
+};
+
+export const addFavorite = (symbol) => {
+  return api.post(`/favorites/${symbol}`);
+};
+
+export const removeFavorite = (symbol) => {
+  return api.delete(`/favorites/${symbol}`);
+};
+
 export default api;
 
 export const getTriggeredAlerts = () => api.get('/alerts/triggered');

@@ -163,7 +163,7 @@ body {
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
   color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
@@ -208,7 +208,7 @@ body {
 
 .app-nav-btn.active {
   background: rgba(167, 139, 250, 0.18);
-  color: #ffffff;
+  color: #000000;
   border-color: rgba(167, 139, 250, 0.35);
 }
 
@@ -649,7 +649,7 @@ body {
 }
 
 .portfolio-subtitle {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(11, 21, 48, 0.55);
   font-size: 0.8rem;
 }
 
@@ -892,8 +892,10 @@ body {
 
 .portfolio-holding-info {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -2286,8 +2288,17 @@ body {
 }
 
 [data-theme='light'] body {
-  background: radial-gradient(circle at 15% 10%, rgba(139,92,246,0.10), transparent 45%), radial-gradient(circle at 85% 15%, rgba(34,211,238,0.10), transparent 40%), radial-gradient(circle at 50% 100%, rgba(236,72,153,0.08), transparent 50%), var(--bg-0);
+  background: #ffffff;
   background-attachment: fixed;
+}
+
+[data-theme='light'] .dash-root {
+  background-image: none !important;
+  background-color: #f9dcff !important;
+}
+
+[data-theme='light'] .dash-root > div:first-child {
+  display: none !important;
 }
 
 .starfield {
@@ -2427,4 +2438,272 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* ===================================
+   AI Tooltip (Onboarding Bubble)
+   =================================== */
+.ai-tooltip {
+  position: fixed;
+  bottom: 94px;
+  left: 24px;
+  z-index: 91;
+  animation: ai-tooltip-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes ai-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-tooltip-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px 12px 12px;
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.5);
+  min-width: 220px;
+}
+
+.ai-tooltip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.ai-tooltip-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ai-tooltip-text {
+  font-size: 0.78rem;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.ai-tooltip-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ai-tooltip-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ai-tooltip-arrow {
+  position: absolute;
+  bottom: -6px;
+  left: 24px;
+  width: 12px;
+  height: 12px;
+  background: #7c3aed;
+  transform: rotate(45deg);
+  box-shadow: 4px 4px 6px rgba(124, 58, 237, 0.3);
+}
+
+/* ===================================
+   Price Table — Search Bar
+   =================================== */
+.price-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.price-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 220px;
+}
+
+.price-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-mid);
+  pointer-events: none;
+}
+
+.price-search-input {
+  width: 100%;
+  padding: 8px 34px 8px 36px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 8px;
+  color: var(--text-hi);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.price-search-input:focus {
+  border-color: #a78bfa;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.price-search-input::placeholder {
+  color: var(--text-mid);
+}
+
+.price-search-clear {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-mid);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.price-search-clear:hover {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fca5a5;
+}
+
+/* Light theme adjustments */
+[data-theme='light'] .price-search-input {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(124, 58, 237, 0.25);
+  color: #0b1530;
+}
+
+[data-theme='light'] .price-search-input:focus {
+  background: #ffffff;
+  border-color: #7c3aed;
+}
+
+[data-theme='light'] .price-search-clear {
+  background: rgba(0, 0, 0, 0.06);
+  color: #425072;
+}
+
+[data-theme='light'] .price-search-clear:hover {
+  background: rgba(224, 50, 79, 0.12);
+  color: #e0324f;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .price-table-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .price-search-wrapper {
+    min-width: 100%;
+  }
+}
+
+/* ===================================
+   Favorite Star Button (Dashboard table)
+   =================================== */
+.favorite-star-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  color: var(--text-mid);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.favorite-star-btn:hover {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fbbf24;
+  transform: scale(1.1);
+}
+
+.favorite-star-btn.is-favorite {
+  color: #fbbf24;
+}
+
+.favorite-star-btn.is-favorite:hover {
+  color: #f59e0b;
+}
+
+/* Light theme */
+[data-theme='light'] .favorite-star-btn {
+  color: rgba(66, 80, 114, 0.5);
+}
+
+[data-theme='light'] .favorite-star-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+[data-theme='light'] .favorite-star-btn.is-favorite {
+  color: #f59e0b;
+}
+
+/* ===================================
+   Favorites Page — Remove Button
+   =================================== */
+.favorite-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  color: var(--text-mid);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.favorite-remove-btn:hover {
+  background: rgba(244, 63, 94, 0.12);
+  color: #fca5a5;
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+[data-theme='light'] .favorite-remove-btn:hover {
+  background: rgba(224, 50, 79, 0.1);
+  color: #e0324f;
+  border-color: rgba(224, 50, 79, 0.3);
 }

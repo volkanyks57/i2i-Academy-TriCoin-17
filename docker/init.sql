@@ -52,3 +52,14 @@ CREATE TABLE price_snapshots (
 );
 
 CREATE INDEX idx_price_snapshots_symbol_time ON price_snapshots(symbol, snapshot_at DESC);
+
+-- favorites: user's favorited crypto symbols
+CREATE TABLE favorites (
+    id         BIGSERIAL PRIMARY KEY,
+    user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    symbol     VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, symbol)
+);
+
+CREATE INDEX idx_favorites_user_id ON favorites(user_id);
