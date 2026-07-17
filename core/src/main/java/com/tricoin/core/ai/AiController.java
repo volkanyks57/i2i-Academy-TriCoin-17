@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.tricoin.core.ai.dto.HealthScoreResponse;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Map;
 
@@ -35,6 +37,17 @@ public class AiController {
                     "error", "LLM_UNAVAILABLE",
                     "message", e.getMessage()
                 ));
+     }
+    }
+
+    @GetMapping("/health-score")
+    public ResponseEntity<?> healthScore(@RequestAttribute("username") String username) {
+        try {
+            HealthScoreResponse response = aiInsightsService.getHealthScore(username);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "LLM_UNAVAILABLE", "message", e.getMessage()));
         }
     }
 }

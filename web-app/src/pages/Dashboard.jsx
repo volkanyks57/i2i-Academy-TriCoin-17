@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
-import { getMarketPrices, getFavorites, addFavorite, removeFavorite } from '../services/api';
+import { getMarketPrices, getFavorites, addFavorite, removeFavorite, getPriceHistory } from '../services/api';
 import Header from '../components/Header';
 import AiInsights from '../components/AiInsights';
 import TradeModal from '../components/TradeModal';
 import PortfolioWidget from '../components/PortfolioWidget';
-
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
   const [prices, setPrices] = useState([]);
@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [favorites, setFavorites] = useState([]);
   const [pendingQuestion, setPendingQuestion] = useState(null);
   const previousPricesRef = useRef({});
+  const [sparklines, setSparklines] = useState({});
 
   const fetchPrices = async () => {
     try {
@@ -41,11 +42,34 @@ export default function Dashboard() {
     }
   };
 
+  const fetchSparklines = async (symbols) => {
+  const results = await Promise.allSettled(
+    symbols.map((symbol) => getPriceHistory(symbol, 24))
+  );
+  const map = {};
+  results.forEach((res, i) => {
+    if (res.status === 'fulfilled') {
+      map[symbols[i]] = (res.value.data.points || []).map((p) => ({
+        price: parseFloat(p.price),
+      }));
+    }
+  });
+  setSparklines((prev) => ({ ...prev, ...map }));
+};
+
   useEffect(() => {
     fetchPrices();
     const interval = setInterval(fetchPrices, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+  if (prices.length === 0) return;
+  const symbols = prices.map((p) => p.symbol);
+  fetchSparklines(symbols);
+  const interval = setInterval(() => fetchSparklines(symbols), 60000);
+  return () => clearInterval(interval);
+}, [prices.length]);
 
   useEffect(() => {
     setShowAiTooltip(true);
@@ -145,8 +169,6 @@ export default function Dashboard() {
       />
     </div>
 
-   
-
     {/* Tablo Kartı - Çökmeyen Neon Çerçeve */}
     <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '20px' }}>
       <div className="price-table-header">
@@ -178,12 +200,13 @@ export default function Dashboard() {
         </div>
       </div>
       <div style={{ overflowX: 'auto' }}>
-        <table className="price-table">
+        <table className="price-table market-table">
           <thead>
             <tr>
               <th style={{ width: '40px' }}></th>
               <th>Sembol</th>
               <th>Fiyat ($)</th>
+              <th style={{ width: '90px' }}>Trend</th>
               <th>24s Değişim</th>
             </tr>
           </thead>
@@ -220,6 +243,24 @@ export default function Dashboard() {
                     <strong>{item.symbol}</strong>
                   </td>
                   <td>{parseFloat(item.price).toFixed(2)}</td>
+                  <td style={{ width: '90px' }}>
+                    {sparklines[item.symbol]?.length > 1 ? (
+                      <ResponsiveContainer width="100%" height={30}>
+                        <LineChart data={sparklines[item.symbol]}>
+                          <Line
+                            type="monotone"
+                            dataKey="price"
+                            stroke={isUp ? '#10b981' : '#ef4444'}
+                            strokeWidth={1.5}
+                            dot={false}
+                            isAnimationActive={false}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <span style={{ color: 'var(--text-lo)', fontSize: '0.75rem' }}>—</span>
+                    )}
+                  </td>
                   <td style={{ color: isUp ? 'var(--up)' : 'var(--down)', fontWeight: 'bold' }}>
                     {isUp ? '+' : ''}{parseFloat(item.change24h).toFixed(2)}%
                   </td>
