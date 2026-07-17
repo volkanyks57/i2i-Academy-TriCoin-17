@@ -673,7 +673,7 @@ body {
 
 .portfolio-breakdown {
   display: grid;
-  grid-template-columns: 1fr 1.35fr;
+  grid-template-columns: 1.3fr 1fr;
   gap: 12px;
   align-items: stretch;
 }
@@ -817,16 +817,42 @@ body {
 .portfolio-performer-line.positive { color: #10b981; }
 .portfolio-performer-line.negative { color: #ef4444; }
 
+.portfolio-ai-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.portfolio-ai-cta-nav {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(167, 139, 250, 0.15);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.portfolio-ai-cta-nav:hover {
+  background: rgba(167, 139, 250, 0.3);
+}
+
 .portfolio-ai-cta {
   display: block;
   width: 100%;
-  margin-top: 16px;
   padding: 11px 14px;
   background: linear-gradient(135deg, rgba(167, 139, 250, 0.22) 0%, rgba(124, 58, 237, 0.22) 100%);
   border: 1px solid rgba(167, 139, 250, 0.4);
   border-radius: 8px;
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   text-align: left;
@@ -2083,8 +2109,13 @@ body {
 
 /* 2. Header */
 .app-header {
-  position: sticky; top: 0; z-index: 90;
-  margin: -20px -20px 0 -20px;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: -20px;
+  margin-bottom: 30px;
   background: var(--bg-header);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(167, 139, 250, 0.2);

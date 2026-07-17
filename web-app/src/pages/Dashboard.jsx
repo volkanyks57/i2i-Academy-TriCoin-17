@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [portfolioRefresh, setPortfolioRefresh] = useState(0);
+  const [pendingQuestion, setPendingQuestion] = useState(null);
   const previousPricesRef = useRef({});
 
   const fetchPrices = async () => {
@@ -60,7 +61,12 @@ export default function Dashboard() {
       </svg>
     </button>
 
-    <AiInsights isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+    <AiInsights
+      isOpen={isChatOpen}
+      onClose={() => setIsChatOpen(false)}
+      initialQuestion={pendingQuestion}
+      onQuestionConsumed={() => setPendingQuestion(null)}
+    />
 
     <TradeModal
       symbol={selectedSymbol}
@@ -73,7 +79,10 @@ export default function Dashboard() {
     <div className="neon-glow" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-a)', borderRadius: '12px', padding: '10px', marginBottom: '24px' }}>
       <PortfolioWidget
         refreshTrigger={portfolioRefresh}
-        onOpenAiChat={() => setIsChatOpen(true)}
+        onOpenAiChat={(question) => {
+          setPendingQuestion(question || null);
+          setIsChatOpen(true);
+        }}
       />
     </div>
 

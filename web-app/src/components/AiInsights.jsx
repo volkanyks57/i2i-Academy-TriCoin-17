@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getAiInsight } from '../services/api';
 
-const AiInsights = ({ isOpen, onClose }) => {
+const AiInsights = ({ isOpen, onClose, initialQuestion, onQuestionConsumed }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,6 +12,32 @@ const AiInsights = ({ isOpen, onClose }) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+ 
+useEffect(() => {
+  if (!isOpen || !initialQuestion) return;
+
+  const trimmed = initialQuestion.trim();
+  if (!trimmed) return;
+
+  const userMessage = { role: 'user', text: trimmed };
+  setMessages((prev) => [...prev, userMessage]);
+  setLoading(true);
+  onQuestionConsumed?.();
+
+  getAiInsight(trimmed)
+    .then((res) => {
+      const aiMessage = { role: 'assistant', text: res.data.response };
+      setMessages((prev) => [...prev, aiMessage]);
+    })
+    .catch(() => {
+      setMessages((prev) => [...prev, {
+        role: 'assistant',
+        text: 'Üzgünüm, şu an analiz yapamıyorum.',
+        error: true,
+      }]);
+    })
+    .finally(() => setLoading(false));
+}, [isOpen, initialQuestion]);
 
   const handleSend = async () => {
     const trimmed = input.trim();

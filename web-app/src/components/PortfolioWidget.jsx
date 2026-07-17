@@ -8,6 +8,13 @@ const AI_SUGGESTIONS = [
   { icon: '💡', text: 'Bugün ne almalıyım?' },
   { icon: '📉', text: 'Zararımı nasıl azaltırım?' },
   { icon: '🧠', text: 'Portföyüm ne kadar riskli?' },
+  { icon: '💰', text: 'Toplam ne kadar kâr/zarar ettim?' },
+  { icon: '🪙', text: 'Hangi coini satmalıyım?' },
+  { icon: '📈', text: 'ETH fiyatı yükselir mi?' },
+  { icon: '🎯', text: 'Portföyümü nasıl çeşitlendiririm?' },
+  { icon: '📋', text: 'Son işlemlerimi özetle' },
+  { icon: '⚖️', text: 'USD bakiyemi kripto ile dengeli mi?' },
+  { icon: '🔍', text: 'Hangi varlığım en çok dalgalandı?' },
 ];
 
 const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
@@ -17,12 +24,29 @@ const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
   const [username, setUsername] = useState('');
   const [suggestionIndex, setSuggestionIndex] = useState(0);
 
-  useEffect(() => {
-    const rotate = setInterval(() => {
-      setSuggestionIndex((i) => (i + 1) % AI_SUGGESTIONS.length);
-    }, 15000);
-    return () => clearInterval(rotate);
-  }, []);
+const rotateIntervalRef = React.useRef(null);
+
+const startRotation = () => {
+  clearInterval(rotateIntervalRef.current);
+  rotateIntervalRef.current = setInterval(() => {
+    setSuggestionIndex((i) => (i + 1) % AI_SUGGESTIONS.length);
+  }, 15000);
+};
+
+useEffect(() => {
+  startRotation();
+  return () => clearInterval(rotateIntervalRef.current);
+}, []);
+
+const goToPrevSuggestion = () => {
+  setSuggestionIndex((i) => (i - 1 + AI_SUGGESTIONS.length) % AI_SUGGESTIONS.length);
+  startRotation();
+};
+
+const goToNextSuggestion = () => {
+  setSuggestionIndex((i) => (i + 1) % AI_SUGGESTIONS.length);
+  startRotation();
+};
 
   useEffect(() => {
     const token = localStorage.getItem('session_token');
@@ -192,7 +216,7 @@ const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
             <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-performer">
               {bestPerformer ? (
                 <div className="portfolio-performer-line positive">
-                  📈 En çok kazandıran<br />
+                  📈 Portföyünde en çok kazandıran<br />
                   <strong>{bestPerformer.symbol}</strong>{' '}
                   ({prices[bestPerformer.symbol].change24h >= 0 ? '+' : ''}
                   {prices[bestPerformer.symbol].change24h.toFixed(2)}%)
@@ -205,7 +229,7 @@ const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
             <div className="portfolio-quad-cell portfolio-quad-panel portfolio-quad-performer">
               {worstPerformer ? (
                 <div className="portfolio-performer-line negative">
-                  📉 En çok kaybettiren<br />
+                  📉 Portföyünde en çok kaybettiren<br />
                   <strong>{worstPerformer.symbol}</strong>{' '}
                   ({prices[worstPerformer.symbol].change24h >= 0 ? '+' : ''}
                   {prices[worstPerformer.symbol].change24h.toFixed(2)}%)
@@ -216,13 +240,32 @@ const PortfolioWidget = ({ refreshTrigger, onOpenAiChat }) => {
             </div>
           </div>
 
-          {onOpenAiChat && (
-            <button className="portfolio-ai-cta" onClick={onOpenAiChat}>
-              <span key={suggestionIndex} className="portfolio-ai-cta-text">
-                {AI_SUGGESTIONS[suggestionIndex].icon} {AI_SUGGESTIONS[suggestionIndex].text} → AI Asistanı
-              </span>
-            </button>
-          )}
+{onOpenAiChat && (
+  <div className="portfolio-ai-cta-row">
+    <button
+      className="portfolio-ai-cta-nav"
+      onClick={goToPrevSuggestion}
+      aria-label="Önceki soru"
+    >
+      ‹
+    </button>
+    <button
+      className="portfolio-ai-cta"
+      onClick={() => onOpenAiChat(AI_SUGGESTIONS[suggestionIndex].text)}
+    >
+      <span key={suggestionIndex} className="portfolio-ai-cta-text">
+        {AI_SUGGESTIONS[suggestionIndex].icon} {AI_SUGGESTIONS[suggestionIndex].text} → AI Asistanı
+      </span>
+    </button>
+    <button
+      className="portfolio-ai-cta-nav"
+      onClick={goToNextSuggestion}
+      aria-label="Sonraki soru"
+    >
+      ›
+    </button>
+  </div>
+)}
         </div>
 
         <div className="portfolio-holdings-card">
