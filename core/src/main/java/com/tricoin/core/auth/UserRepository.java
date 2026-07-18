@@ -12,9 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Used during registration to reject duplicate usernames early.
     boolean existsByUsername(String username);
 
-    // Used during registration to reject duplicate emails early.
+    // Used during registration to reject duplicate emails.
     boolean existsByEmail(String email);
-
-    // Used during registration to reject duplicate phone numbers early.
-    boolean existsByPhoneNumber(String phoneNumber);
 }

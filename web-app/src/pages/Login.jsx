@@ -71,11 +71,7 @@ const Login = () => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '80px',
-      padding: '40px',
-      backgroundImage: `linear-gradient(rgba(15, 15, 19, 0.7), rgba(15, 15, 19, 0.7)), url(${loginBg})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
+      padding: '40px'
     }}>
 
       <ThemeToggle className="auth-theme-toggle" />
@@ -153,25 +149,22 @@ const Login = () => {
                              coin.priceChange || 0;
 
           return (
-           <div key={coin.id || coin.symbol || index} className="neon-glow" style={{ 
-              background: 'rgba(20, 20, 30, 0.8)', 
-              padding: '10px', 
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.1)', 
-              textAlign: 'center',
-              backdropFilter: 'blur(5px)',
-              cursor: 'default'
-            }}>
-              <h4 style={{ margin: '0 0 5px 0', color: '#fff', fontSize: '0.75rem', fontWeight: 'bold' }}>{coinName}</h4>
-              <p style={{ fontSize: '0.9rem', color: '#00ffcc', margin: '0', fontWeight: 'bold' }}>
+           <div key={coin.id || coin.symbol || index} className="login-coin-card neon-glow">
+              <div className="login-coin-header">
+                <img 
+                  src={`https://assets.coincap.io/assets/icons/${coin.symbol ? coin.symbol.toLowerCase() : 'btc'}@2x.png`} 
+                  alt={coinName} 
+                  className="login-coin-logo" 
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png'; }}
+                />
+                <h4 className="login-coin-name">{coinName}</h4>
+              </div>
+              <p className="login-coin-price">
                 ${Number(coinPrice).toLocaleString()}
               </p>
-              <span style={{ 
-                color: coinChange > 0 ? '#00ffcc' : (coinChange < 0 ? '#ff4466' : '#ffffff'),
-                fontSize: '0.7rem',
-                fontWeight: 'bold'
-              }}>
-                {coinChange > 0 ? '▲' : (coinChange < 0 ? '▼' : '-')} {Math.abs(Number(coinChange)).toFixed(2)}%                     </span>
+              <span className={`login-coin-change ${coinChange > 0 ? 'up' : (coinChange < 0 ? 'down' : 'neutral')}`}>
+                {coinChange > 0 ? '▲' : (coinChange < 0 ? '▼' : '-')} {Math.abs(Number(coinChange)).toFixed(2)}%
+              </span>
             </div>
           );
         })}

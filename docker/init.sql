@@ -3,12 +3,17 @@
 
 -- users: registered user accounts
 CREATE TABLE users (
-    id            BIGSERIAL PRIMARY KEY,
-    username      VARCHAR(50)  NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
+    id                  BIGSERIAL PRIMARY KEY,
+    username            VARCHAR(50)  NOT NULL UNIQUE,
+    password_hash       VARCHAR(255) NOT NULL,
     profile_picture_url VARCHAR(255),
-    created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+    email               VARCHAR(255),
+    phone_country_code  VARCHAR(5),
+    phone_number        VARCHAR(20),
+    created_at          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE UNIQUE INDEX idx_users_email ON users(email) WHERE email IS NOT NULL;
 
 -- wallets: USD balance per user (1-to-1 with users)
 CREATE TABLE wallets (

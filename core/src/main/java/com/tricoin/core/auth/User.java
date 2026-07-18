@@ -25,18 +25,21 @@ public class User {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "phone_number", nullable = false, unique = true, length = 20)
-    private String phoneNumber;
-
     // Bcrypt hash only — plain text passwords are never persisted or logged.
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;
+
+    @Column
+    private String email;
+
+    @Column(name = "phone_country_code", length = 5)
+    private String phoneCountryCode;
+
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

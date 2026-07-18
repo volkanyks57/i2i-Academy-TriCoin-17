@@ -51,23 +51,17 @@ public class AuthController {
 
         if (userRepository.existsByEmail(request.email())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body("Bu e-posta adresi zaten kullanılıyor");
-        }
-
-        if (userRepository.existsByPhoneNumber(request.phoneNumber())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body("Bu telefon numarası zaten kullanılıyor");
+                .body("Email already registered");
         }
 
         User user = User.builder()
             .username(request.username())
-            .email(request.email())
-            .phoneNumber(request.phoneNumber())
             .passwordHash(passwordEncoder.encode(request.password()))
+            .email(request.email())
+            .phoneCountryCode(request.phoneCountryCode())
+            .phoneNumber(request.phoneNumber())
             .build();
         user = userRepository.save(user);
-
-        
 
         Wallet wallet = Wallet.builder()
             .userId(user.getId())
@@ -75,8 +69,6 @@ public class AuthController {
             .updatedAt(LocalDateTime.now())
             .build();
         walletRepository.save(wallet);
-
-       
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body("User registered successfully");
