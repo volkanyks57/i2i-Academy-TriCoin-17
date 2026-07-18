@@ -2,18 +2,66 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import ThemeToggle from '../components/ThemeToggle';
+import { useTheme } from '../hooks/useTheme';
+import loginBg from '../assets/login-bg.png';
+
+const COUNTRY_CODES = [
+  { code: '+90', country: '🇹🇷 Türkiye', short: 'TR', placeholder: '5XX XXX XX XX' },
+  { code: '+1', country: '🇺🇸 ABD', short: 'US', placeholder: '(XXX) XXX-XXXX' },
+  { code: '+44', country: '🇬🇧 İngiltere', short: 'GB', placeholder: '7XXX XXXXXX' },
+  { code: '+49', country: '🇩🇪 Almanya', short: 'DE', placeholder: '1XX XXXXXXXX' },
+  { code: '+33', country: '🇫🇷 Fransa', short: 'FR', placeholder: '6 XX XX XX XX' },
+  { code: '+39', country: '🇮🇹 İtalya', short: 'IT', placeholder: '3XX XXX XXXX' },
+  { code: '+34', country: '🇪🇸 İspanya', short: 'ES', placeholder: '6XX XXX XXX' },
+  { code: '+31', country: '🇳🇱 Hollanda', short: 'NL', placeholder: '6 XXXXXXXX' },
+  { code: '+7', country: '🇷🇺 Rusya', short: 'RU', placeholder: '9XX XXX XX XX' },
+  { code: '+81', country: '🇯🇵 Japonya', short: 'JP', placeholder: '90 XXXX XXXX' },
+  { code: '+82', country: '🇰🇷 Güney Kore', short: 'KR', placeholder: '10 XXXX XXXX' },
+  { code: '+86', country: '🇨🇳 Çin', short: 'CN', placeholder: '1XX XXXX XXXX' },
+  { code: '+91', country: '🇮🇳 Hindistan', short: 'IN', placeholder: '9XXX XXX XXX' },
+  { code: '+55', country: '🇧🇷 Brezilya', short: 'BR', placeholder: '11 9XXXX XXXX' },
+  { code: '+61', country: '🇦🇺 Avustralya', short: 'AU', placeholder: '4XX XXX XXX' },
+  { code: '+971', country: '🇦🇪 BAE', short: 'AE', placeholder: '5X XXX XXXX' },
+  { code: '+966', country: '🇸🇦 S. Arabistan', short: 'SA', placeholder: '5X XXX XXXX' },
+  { code: '+30', country: '🇬🇷 Yunanistan', short: 'GR', placeholder: '69X XXX XXXX' },
+  { code: '+994', country: '🇦🇿 Azerbaycan', short: 'AZ', placeholder: '5X XXX XX XX' },
+  { code: '+995', country: '🇬🇪 Gürcistan', short: 'GE', placeholder: '5XX XX XX XX' },
+];
 
 const Register = () => {
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const { theme } = useTheme();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    countryCode: '+90',
+    phone: '',
+    password: '',
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    return /^\d{7,14}$/.test(phone);
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.password) {
+    if (!formData.username || !formData.email || !formData.phone || !formData.password) {
       setError('Lütfen tüm alanları doldurun.');
+      return;
+    }
+    if (!validateEmail(formData.email)) {
+      setError('Geçerli bir e-posta adresi girin.');
+      return;
+    }
+    if (!validatePhone(formData.phone)) {
+      setError('Geçerli bir telefon numarası girin.');
       return;
     }
     if (formData.password.length < 6) {
@@ -24,21 +72,33 @@ const Register = () => {
     setLoading(true);
     setError('');
     try {
-      await api.post('/auth/register', formData);
+      const payload = {
+        username: formData.username,
+        email: formData.email,
+        phoneNumber: formData.countryCode + formData.phone,
+        password: formData.password,
+      };
+      await api.post('/auth/register', payload);
       setSuccess(true);
-      // Give the user a moment to read the confirmation before redirecting.
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       const message =
-        err.response?.data?.message || 'Kayıt başarısız. Lütfen tekrar deneyin.';
+        err.response?.data?.message || err.response?.data || 'Kayıt başarısız. Lütfen tekrar deneyin.';
       setError(message);
     } finally {
       setLoading(false);
     }
   };
 
+  const selectedCountry = COUNTRY_CODES.find((c) => c.code === formData.countryCode);
+
   return (
-    <div className="auth-page">
+    <div className="auth-page" style={{
+      backgroundImage: `linear-gradient(${theme === 'light' ? 'rgba(238, 244, 255, 0.85), rgba(238, 244, 255, 0.85)' : 'rgba(15, 15, 19, 0.7), rgba(15, 15, 19, 0.7)'}), url(${loginBg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}>
       <ThemeToggle className="auth-theme-toggle" />
       <div className="auth-card">
         <div className="auth-brand">
@@ -82,6 +142,47 @@ const Register = () => {
                   disabled={loading}
                   autoFocus
                 />
+              </label>
+
+              <label className="auth-label">
+                E-posta
+                <input
+                  className="auth-input"
+                  type="email"
+                  placeholder="ornek@mail.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={loading}
+                />
+              </label>
+
+              <label className="auth-label">
+                Telefon Numarası
+                <div className="auth-phone-wrapper">
+                  <select
+                    className="auth-phone-code"
+                    value={formData.countryCode}
+                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                    disabled={loading}
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={c.code + c.short} value={c.code}>
+                        {c.country} ({c.code})
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className="auth-input auth-phone-input"
+                    type="tel"
+                    placeholder={COUNTRY_CODES.find((c) => c.code === formData.countryCode)?.placeholder || 'Telefon numarası'}
+                    value={formData.phone}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      setFormData({ ...formData, phone: val });
+                    }}
+                    disabled={loading}
+                  />
+                </div>
               </label>
 
               <label className="auth-label">

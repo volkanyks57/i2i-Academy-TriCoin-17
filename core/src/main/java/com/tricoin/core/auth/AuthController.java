@@ -49,8 +49,20 @@ public class AuthController {
                 .body("Username already taken");
         }
 
+        if (userRepository.existsByEmail(request.email())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Bu e-posta adresi zaten kullanılıyor");
+        }
+
+        if (userRepository.existsByPhoneNumber(request.phoneNumber())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Bu telefon numarası zaten kullanılıyor");
+        }
+
         User user = User.builder()
             .username(request.username())
+            .email(request.email())
+            .phoneNumber(request.phoneNumber())
             .passwordHash(passwordEncoder.encode(request.password()))
             .build();
         user = userRepository.save(user);

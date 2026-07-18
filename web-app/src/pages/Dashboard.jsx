@@ -233,14 +233,16 @@ export default function Dashboard() {
                       </svg>
                     </button>
                   </td>
-                  <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img
-                      src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
-                      alt={item.symbol}
-                      className="coin-logo"
-                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png'; }}
-                    />
-                    <strong>{item.symbol}</strong>
+                  <td>
+                    <div className="coin-cell">
+                      <img
+                        src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
+                        alt={item.symbol}
+                        className="coin-logo"
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png'; }}
+                      />
+                      <strong>{item.symbol}</strong>
+                    </div>
                   </td>
                   <td>{parseFloat(item.price).toFixed(2)}</td>
                   <td style={{ width: '90px' }}>
