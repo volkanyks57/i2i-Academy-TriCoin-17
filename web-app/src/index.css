@@ -489,6 +489,106 @@ body {
   color: var(--text-secondary);
 }
 
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.strength-bar-bg {
+  height: 6px;
+  flex: 1;
+  background: #ffffff; /* İçi beyaz */
+  border: 1px solid rgba(128, 128, 128, 0.4); /* Daha belirgin gri çerçeve */
+  border-radius: 3px;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.strength-bar-fill.active-0 { width: 0%; }
+.strength-bar-fill.active-1 { width: 25%; background: #ef4444; } /* Red for Weak */
+.strength-bar-fill.active-2 { width: 50%; background: #f59e0b; } /* Orange for Fair */
+.strength-bar-fill.active-3 { width: 75%; background: #3b82f6; } /* Blue for Good */
+.strength-bar-fill.active-4 { width: 100%; background: #10b981; } /* Green for Strong */
+
+.strength-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 60px;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+/* Social Auth Buttons */
+.auth-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0 16px 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.auth-separator::before,
+.auth-separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.auth-separator:not(:empty)::before {
+  margin-right: .5em;
+}
+
+.auth-separator:not(:empty)::after {
+  margin-left: .5em;
+}
+
+.auth-social-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.auth-social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #111827; /* Beyaz zemin üzerinde net okunması için koyu renk */
+  font-weight: 600; /* Biraz daha kalın font */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-social-btn:hover {
+  background: #f3f4f6; /* Hover durumunda çok hafif gri */
+  border-color: #9ca3af;
+}
+
+.auth-social-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .auth-phone-wrapper {
   display: flex;
   gap: 8px;
