@@ -64,13 +64,16 @@ public class GeminiClient {
 
             if (response.statusCode() != 200) {
                 log.error("Gemini returned {}: {}", response.statusCode(), response.body());
-                throw new IllegalStateException("Gemini returned status " + response.statusCode());
+                throw new IllegalStateException("Gemini API Error (" + response.statusCode() + "): " + response.body());
             }
 
             return extractText(response.body());
         } catch (Exception e) {
             log.error("Gemini API call failed: {}", e.getMessage());
-            throw new IllegalStateException("AI service temporarily unavailable", e);
+            if (e.getMessage() != null && e.getMessage().contains("Gemini API Error")) {
+                throw new IllegalStateException(e.getMessage(), e);
+            }
+            throw new IllegalStateException("AI service temporarily unavailable: " + e.getMessage(), e);
         }
     }
 
