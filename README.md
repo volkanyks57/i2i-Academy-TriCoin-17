@@ -1,7 +1,7 @@
 # TriCoin
 
 <p align="center">
-  <img src="docs/screenshots/dashboard.jpeg" alt="TriCoin Dashboard" width="850">
+  <img src="docs/dashboard.jpeg" alt="TriCoin Dashboard" width="850">
 </p>
 
 <p align="center">
@@ -31,20 +31,20 @@ TriCoin is a full-stack crypto trading simulator. It streams near-real-time mark
 
 <table>
   <tr>
-    <td width="50%"><b>Login</b><br><img src="docs/screenshots/login.jpeg" width="100%"></td>
-    <td width="50%"><b>Register</b><br><img src="docs/screenshots/register.jpeg" width="100%"></td>
+    <td width="50%"><b>Login</b><br><img src="docs/login.jpeg" width="100%"></td>
+    <td width="50%"><b>Register</b><br><img src="docs/register.jpeg" width="100%"></td>
   </tr>
   <tr>
-    <td width="50%"><b>AI-generated portfolio health score</b><br><img src="docs/screenshots/health_score.jpeg" width="100%"></td>
-    <td width="50%"><b>Trade modal — 30-second locked quote + price alert</b><br><img src="docs/screenshots/buy_sell.jpeg" width="100%"></td>
+    <td width="50%"><b>AI-generated portfolio health score</b><br><img src="docs/health_score.jpeg" width="100%"></td>
+    <td width="50%"><b>Trade modal — 30-second locked quote + price alert</b><br><img src="docs/buy_sell.jpeg" width="100%"></td>
   </tr>
   <tr>
-    <td width="50%"><b>AI Assistant — portfolio Q&A</b><br><img src="docs/screenshots/ai_assistant.jpeg" width="100%"></td>
-    <td width="50%"><b>Transaction history</b><br><img src="docs/screenshots/history.jpeg" width="100%"></td>
+    <td width="50%"><b>AI Assistant — portfolio Q&A</b><br><img src="docs/ai_assistant.jpeg" width="100%"></td>
+    <td width="50%"><b>Transaction history</b><br><img src="docs/history.jpeg" width="100%"></td>
   </tr>
   <tr>
-    <td width="50%"><b>Favorites</b><br><img src="docs/screenshots/favorites.jpeg" width="100%"></td>
-    <td width="50%"><b>Account settings — password & profile picture</b><br><img src="docs/screenshots/profile.jpeg" width="100%"></td>
+    <td width="50%"><b>Favorites</b><br><img src="docs/favorites.jpeg" width="100%"></td>
+    <td width="50%"><b>Account settings — password & profile picture</b><br><img src="docs/profile.jpeg" width="100%"></td>
   </tr>
 </table>
 
@@ -138,8 +138,8 @@ graph TD
 ### 🔐 Authentication & Accounts
 
 <p align="center">
-  <img src="docs/screenshots/register.jpeg" alt="Registration screen" width="300">
-  <img src="docs/screenshots/profile.jpeg" alt="Account settings screen" width="300">
+  <img src="docs/register.jpeg" alt="Registration screen" width="300">
+  <img src="docs/profile.jpeg" alt="Account settings screen" width="300">
 </p>
 
 - Register / login with BCrypt-hashed passwords (Spring Security's `PasswordEncoder`, never logged or stored in plain text)
@@ -156,7 +156,7 @@ graph TD
 
 ### 💱 Trading
 
-<p align="center"><img src="docs/screenshots/buy_sell.jpeg" alt="Trade modal with 30-second locked quote" width="420"></p>
+<p align="center"><img src="docs/buy_sell.jpeg" alt="Trade modal with 30-second locked quote" width="420"></p>
 
 - **30-second quote lock**: requesting a quote freezes that price in Redis for exactly 30 seconds; the trade can only execute against that locked price, not a live one
 - Buys and sells are `@Transactional` — wallet debit/credit, holdings update, and the transaction log insert all commit or roll back together
@@ -170,7 +170,7 @@ graph TD
 
 ### 🤖 AI Insights (Google Gemini)
 
-<p align="center"><img src="docs/screenshots/ai_assistant.jpeg" alt="AI portfolio assistant chat panel" width="700"></p>
+<p align="center"><img src="docs/ai_assistant.jpeg" alt="AI portfolio assistant chat panel" width="700"></p>
 
 - Free-form chat: `POST /api/ai/query` builds a rich, structured prompt from the user's live balance, holdings (with current market value), last 10 transactions, and all current prices — then forwards it to Gemini
 - Portfolio health score: `GET /api/ai/health-score` asks Gemini to return strict JSON (`score`, `summary`, `strengths`, `risks`); the backend strips accidental Markdown code-fences and parses it, falling back to a neutral score of 50 if parsing fails
@@ -637,7 +637,6 @@ Worth being aware of if you're extending this project:
 - `price_alerts` is schema-managed by Hibernate (`ddl-auto: update`), not by `init.sql` — keep that in mind if you're used to the schema being fully declarative.
 - CORS is hardcoded to `http://localhost:5173` — deploying the frontend elsewhere requires updating `CorsConfig`.
 - The root-level `package.json` / `package-lock.json` at the repository root are effectively unused placeholders; the real frontend project lives in `web-app/`.
-
 
 Built for educational purposes as part of the **i2i Academy Internship Program**.
 
