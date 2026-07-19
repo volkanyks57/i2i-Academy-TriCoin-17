@@ -139,6 +139,7 @@ graph TD
 
 <p align="center">
   <img src="docs/register.jpeg" alt="Registration screen" width="300">
+  <img src="docs/login.jpeg" alt="Account settings screen" width="300">
   <img src="docs/profile.jpeg" alt="Account settings screen" width="300">
 </p>
 
