@@ -63,7 +63,6 @@ TriCoin is a full-stack crypto trading simulator. It streams near-real-time mark
 - [API Reference](#api-reference)
 - [Architectural & Functional Details](#architectural--functional-details)
 - [Known Rough Edges](#known-rough-edges)
-- [License](#license)
 
 ---
 
